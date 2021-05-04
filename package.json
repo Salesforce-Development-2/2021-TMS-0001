@@ -1,0 +1,11 @@
+{
+  "name": "transcript_app",
+  "version": "1.0.0",
+  "description": " An application that allow trainees access their grades for various courses they have been enrolled in.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
