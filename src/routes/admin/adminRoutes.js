@@ -7,4 +7,8 @@ router.post('/:object', (req, res) => {
     // req.params.object
 });
 
+router.put('/:object/:id', (req, res) =>{
+    // logic for updating the various objects will be put here
+})
+
 module.exports = router;
