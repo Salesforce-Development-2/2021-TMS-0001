@@ -19,6 +19,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
 
+// Home route
+app.get("/", function (req, res) {
+  res.send("<h2> Home Route </h2>");
+});
+
 // Starting the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
