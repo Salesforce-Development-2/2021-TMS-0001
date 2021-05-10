@@ -3,7 +3,7 @@ const trackRoute = express.Router();
 
 
 // TRACK ROUTE
-router.get("/", function (req, res) {
+trackRoute.get("/", function (req, res) {
   // The Logic goes here
   res.send("<h2>The logic goes here</h2>");
 });

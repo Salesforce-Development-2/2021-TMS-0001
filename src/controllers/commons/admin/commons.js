@@ -22,4 +22,4 @@ router.put('/:object/:id', (req, res) =>{
 // router.delete()
 // router.get()
 
-module.exports = router;
+// module.exports = router;

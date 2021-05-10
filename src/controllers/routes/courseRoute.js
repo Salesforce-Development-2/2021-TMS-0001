@@ -2,7 +2,7 @@ const express = require("express");
 const courseRoute = express.Router();
 
 // COURSE ROUTE
-router.get("/", function (req, res) {
+courseRoute.get("/", function (req, res) {
   // The Logic goes here
   res.send("<h2>The logic goes here</h2>");
 });
