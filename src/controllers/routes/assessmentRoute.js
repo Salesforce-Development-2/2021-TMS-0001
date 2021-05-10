@@ -1,5 +1,6 @@
-var express = require("express");
-var router = express.Router();
+const express = require("express");
+const assessmentRoute = express.Router();
+
 
 // ASSESSMENT ROUTE
 router.get("/", function (req, res) {
@@ -7,4 +8,4 @@ router.get("/", function (req, res) {
   res.send("<h2>The logic goes here</h2>");
 });
 
-module.exports = router;
+module.exports = assessmentRoute;
