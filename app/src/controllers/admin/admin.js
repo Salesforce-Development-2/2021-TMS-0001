@@ -54,7 +54,8 @@ router.post('/:object', async (req, res) => {
                 if(err){
                     return res.json({
                         code: "failed",
-                        message: "Failed to save data in database"
+                        message: "Failed to save data in database",
+                        error : err
                     })
                 }
                 return res.json({
