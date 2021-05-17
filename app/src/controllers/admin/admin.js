@@ -11,30 +11,70 @@ router.get('/:object', (req, res) =>{
 
 // parameter object will be replaced with users, tracks, courses and assessment
 router.post('/:object', async (req, res) => { 
-    // res.send('post added');
-    // req.params.object
-    console.log(req.params.object)
+
+    // Check if the request is /users
     if(req.params.object == 'users'){
+
+        // Check if the username already exist in the database
+        const emailExists = await User.findOne({"email": req.body.email})
+
+        // If email already exists return bad request
+        if(emailExists){
+            return res.status(400).json({
+                code: "email-exists",
+                message: "Email already exists",
+            })
+        }
+
+        // Find the type of role with the role_type specified in the request body
         Role.findOne({"role_type": req.body.role_type}, (err, role)=>{
-            console.log(role.id);
-            const trainee1 = new User({
+            
+            //If the role doesn't exist return 404 of role doesn't exist
+            if(!role){
+                return res.status(404).json({
+                    code: "resource-not-found",
+                    message: "The specified role is not found",
+                })
+            } 
+
+
+            // Create a new user with the data from the request body 
+            const user = new User({
                 firstname: req.body.firstname,
                 lastname: req.body.lastname,
                 password: req.body.password,
                 username: req.body.username,
                 email: req.body.email,
                 role_type: role.id,
-                date_created: Date.now()
+                date_created: Date.now(),
             })
-            trainee1.save((value) =>{
-                console.log(value);
+
+            // Save the user in the database
+            user.save((err, user) =>{
+                if(err){
+                    return res.json({
+                        code: "failed",
+                        message: "Failed to save data in database"
+                    })
+                }
+                return res.json({
+                    code: "success",
+                    message: "User created",
+                    result: {
+                        id: user.id,
+                        firstname: user.firstname,
+                        lastname: user.lastname,
+                        username: user.username,
+                        email: user.email,
+                        role_type: user.role_type
+                    }
+                })
             })
         });
 
 
-    }
 
-    res.status(200).end();
+    }
 });
 
 router.put('/:object/:id', (req, res) =>{
