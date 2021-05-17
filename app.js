@@ -13,6 +13,10 @@ const adminRoutes = require("./app/src/controllers/admin/admin");
 const userRoutes = require("./app/src/controllers/user/user");
 // const router = require("./src/controllers/commons/admin/commons");
 
+mongoose.connect('mongodb://localhost:27017/transcript', {useNewUrlParser: true, useUnifiedTopology: true},(err)=>{
+  if(!err) console.log('Connected to db!');
+});
+
 
 // Initialize app
 const app = express();
