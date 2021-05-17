@@ -15,7 +15,7 @@ router.post('/:object', async (req, res) => {
     // Check if the request is /users
     if(req.params.object == 'users'){
 
-        // Check if the username already exist in the database
+        // Check if the email already exist in the database
         const emailExists = await User.findOne({"email": req.body.email})
 
         // If email already exists return bad request
