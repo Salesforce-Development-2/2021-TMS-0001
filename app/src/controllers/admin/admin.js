@@ -89,7 +89,6 @@ router.post("/:object", async (req, res) => {
         message: "Track already exists",
       });
     }
-<<<<<<< HEAD
 
 
     //create track route and logic for post method
@@ -133,7 +132,6 @@ router.post("/:object", async (req, res) => {
                 }
             })
         })
-=======
     // Create a new track with the data from the request body
     const user = new User({
       trackname: req.body.trackname,
@@ -176,7 +174,6 @@ router.post("/:object", async (req, res) => {
         code: "course-exist",
         message: "Course already exist",
       });
->>>>>>> 4c8fada75e3c1bb94edf6e69ce541ab42d59f823
     }
 
     // Create a new course with the data from the request body

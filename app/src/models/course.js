@@ -10,6 +10,7 @@ const courseSchema = mongoose.Schema({
     name: {
       type: mongoose.Schema.Types.ObjectID,
       ref: "User",
+      required: true,
     },
   },
   courseduration: String,
