@@ -71,7 +71,7 @@ router.post("/:object", async (req, res) => {
             message:"batch is not found"
           })
           // set the user id of the batch with the specified 
-          batch.user_id = user._id;
+          batch.user_id.push(user._id);
           batch.save();
         }
         
@@ -176,7 +176,7 @@ router.post("/:object", async (req, res) => {
   // Check if the request is '/course'
   if (req.params.object == "course") {
     // Check if the course_name already exist in the database
-    const courseNameExists = await course.findOne({
+    const courseNameExists = await Course.findOne({
       course_name: req.body.course_name,
     });
 
@@ -190,10 +190,9 @@ router.post("/:object", async (req, res) => {
 
     // Create a new course with the data from the request body
     const course = new Course({
-      coursename: req.body.coursename,
-      courseduration: req.body.courseduration,
-      coursemaster: req.body.coursemaster,
-      coursetrack: req.body.coursetrack,
+      course_name: req.body.course_name,
+      course_duration: req.body.course_duration,
+      course_master: req.body.course_master,
       date_created: Date.now(),
     });
 

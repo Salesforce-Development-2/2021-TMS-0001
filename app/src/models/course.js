@@ -1,16 +1,14 @@
 const mongoose = require("mongoose");
 
 const courseSchema = mongoose.Schema({
-  coursename: {
+  course_name: {
     type: String,
     required: true,
   },
 
-  coursemaster: {
-    name: {
+  course_master: {
       type: String,
       required: true,
-    },
   },
   user_id: [
     {
@@ -18,7 +16,7 @@ const courseSchema = mongoose.Schema({
       ref: "User",
     },
   ],
-  courseduration: Number,
+  course_duration: Number,
   date_created: Date,
   date_updated: Date,
 });
