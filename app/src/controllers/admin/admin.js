@@ -5,6 +5,7 @@ const Role = require('../../models/role')
 const Action = require('../../models/actions');
 const actions = require('../../models/actions');
 const Track = require('../../models/track');
+const Assessment = require("../../models/assessment")
 
 router.get('/:object', (req, res) =>{
     res.send('welcome')
@@ -78,7 +79,6 @@ router.post('/:object', async (req, res) => {
 
 
     //create track route and logic for post method
-    // n
     if(req.params.object == 'tracks'){
 
         // Check if the track already exist in the database
@@ -120,8 +120,33 @@ router.post('/:object', async (req, res) => {
         })
     }
 
-    
-});
+    //create assessment route and logic for post method
+  if (req.params.object == "assessment") {
+      
+
+//Create new assessment with data from req body
+const assessment = new Assessment ({
+  assessment_type: req.body.assessment_type,
+  score: req.body.score,
+  course_id: req.body.course_id
+})
+
+//save assessment in database 
+assessment.save((err, assessment) => {
+    if (err) {
+      return res.json({
+        code: "failed",
+        message: "Failed to save assessment data in database",
+        error: err,
+      });
+    }
+    return res.json({
+      code: "success",
+      message: "Assessment created",
+      result: assessment
+    });
+  });
+}
 
 router.put('/:object/:id', (req, res) =>{
     // logic for updating the various objects will be put here
@@ -130,5 +155,6 @@ router.put('/:object/:id', (req, res) =>{
 router.delete('/:object/:id', (req, res) =>{
     
 })
+
 
 module.exports = router;
