@@ -1,22 +1,21 @@
 const mongoose = require('mongoose');
 
 const trackSchema = mongoose.Schema ({
-    trackname: {
+    track_name: {
         type: String,
         required: true
     },
-    trackmaster: String,
+    track_master: String,
     date_created: Date,
-    course_id: {
+    course_id: [{
         type: mongoose.Schema.Types.ObjectID, 
-        ref: 'Course', 
-        required: true
-    },
-    user_id: {
+        ref: 'Course'}
+        
+    ],
+    user_id: [{
         type: mongoose.Schema.Types.ObjectID, 
-        ref: 'User', 
-        required: true
-    },
+        ref: 'User'}
+    ]
 })
 
 module.exports = mongoose.model("Track", trackSchema);
