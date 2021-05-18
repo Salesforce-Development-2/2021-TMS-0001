@@ -114,10 +114,10 @@ router.post("/:object", async (req, res) => {
     });
   }
   // CREATING COURSE LOGIC BEGINS **************************************************************
-  // Check if the request is /course
+  // Check if the request is '/course'
   if (req.params.object == "course") {
     // Check if the course_name already exist in the database
-    const courseNameExists = await User.findOne({
+    const courseNameExists = await course.findOne({
       course_name: req.body.course_name,
     });
 
