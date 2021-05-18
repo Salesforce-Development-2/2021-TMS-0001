@@ -8,6 +8,8 @@ const Role = require("../../models/role");
 const Track = require("../../models/track");
 const Course = require("../../models/course");
 const Batch = require("../../models/batch");
+const Assessment = require("../../models/assessment");
+
 router.get("/:object", (req, res) => {
   res.send("welcome");
   // logic for updating the various objects will be put here
@@ -220,10 +222,9 @@ router.post("/:object", async (req, res) => {
   }
 
   // CREATING COURSE LOGIC ENDS HERE **********************************************************
-});
 
-    //create assessment route and logic for post method
-    if (req.params.object == "assessment") {
+      //create assessment route and logic for post method
+      if (req.params.object == "assessment") {
       
 
         //Create new assessment with data from req body
@@ -249,6 +250,9 @@ router.post("/:object", async (req, res) => {
             });
           });
     }
+
+});
+
 
 
 router.put("/:object/:id", (req, res) => {
