@@ -122,44 +122,41 @@ router.post("/:object", async (req, res) => {
     });
 
     // If course_name already exists return bad request
-    if (emailExists) {
+    if (courseNameExists) {
       return res.status(400).json({
         code: "course-exist",
         message: "Course already exist",
       });
     }
 
+    // Create a new course with the data from the request body
+    const course = new Course({
+      coursename: req.body.coursename,
+      courseduration: req.body.courseduration,
+      coursemaster: req.body.coursemaster,
+      coursetrack: req.body.coursetrack,
+      date_created: Date.now(),
+    });
 
-      // Create a new course with the data from the request body
-      const user = new User({
-        coursename: req.body.coursename,
-        courseduration: req.body.courseduration,
-        coursemaster: req.body.coursemaster,
-        coursetrack: req.body.coursetrack,
-        date_created: Date.now(),
-      });
-
-      // Save the user in the database
-      user.save((err, user) => {
-        if (err) {
-          return res.json({
-            code: "failed",
-            message: "Failed to save data in database",
-            error: err,
-          });
-        }
+    // Save the course in the database
+    course.save((err, course) => {
+      if (err) {
         return res.json({
-          code: "success",
-          message: "User created",
-          result: {
-            id: user.id,
-            firstname: user.firstname,
-            lastname: user.lastname,
-            username: user.username,
-            email: user.email,
-            role_type: user.role_type,
-          },
+          code: "failed",
+          message: "Failed to save data in database",
+          error: err,
         });
+      }
+      return res.json({
+        code: "success",
+        message: "Course Created",
+        result: {
+          id: course.id,
+          coursename: course.coursename,
+          courseduration: course.courseduration,
+          coursemaster: course.coursemaster,
+          coursetrack: course.coursetrack,
+        },
       });
     });
   }
