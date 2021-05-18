@@ -5,11 +5,9 @@ const router = express.Router();
 // OUR OWN MODULES - FILES
 const User = require("../../models/user");
 const Role = require("../../models/role");
-const Action = require("../../models/actions");
-const actions = require("../../models/actions");
 const Track = require("../../models/track");
 const Course = require("../../models/course");
-
+const Batch = require("../../models/batch");
 router.get("/:object", (req, res) => {
   res.send("welcome");
   // logic for updating the various objects will be put here
@@ -32,6 +30,7 @@ router.post("/:object", async (req, res) => {
 
     // Find the type of role with the role_type specified in the request body
     Role.findOne({ role_type: req.body.role_type }, (err, role) => {
+
       //If the role doesn't exist return 404 of role doesn't exist
       if (!role) {
         return res.status(404).json({
@@ -52,7 +51,7 @@ router.post("/:object", async (req, res) => {
       });
 
       // Save the user in the database
-      user.save((err, user) => {
+      user.save(async (err, user) => {
         if (err) {
           return res.json({
             code: "failed",
@@ -60,6 +59,23 @@ router.post("/:object", async (req, res) => {
             error: err,
           });
         }
+        // Find the batch with the batch name if it was provided
+        let batch_name = req.body.batch_name;
+
+        if(batch_name){
+          const batch = await Batch.findOne({batch_name: batch_name });
+
+          // if batch is not found return 404
+          if(!batch) res.status(404).json({
+            code: "batch-not-found",
+            message:"batch is not found"
+          })
+          // set the user id of the batch with the specified 
+          batch.user_id = user._id;
+          batch.save();
+        }
+        
+        
         return res.json({
           code: "success",
           message: "User created",
@@ -77,89 +93,85 @@ router.post("/:object", async (req, res) => {
   }
 
   //create track route and logic for post method
-  // n
-  if (req.params.object == "tracks") {
+  if(req.params.object == 'tracks'){
     // Check if the track already exist in the database
-    const trackNameExists = await Track.findOne({ trackname: req.body.email });
+    const trackNameExists = await Track.findOne({"track_name": req.body.track_name})
 
     // If track already exists return bad request
-    if (trackNameExists) {
-      return res.status(400).json({
-        code: "track-exist",
-        message: "Track already exists",
-      });
+    if(trackNameExists){
+        return res.status(400).json({
+            code: "track-exist",
+            message: "Track already exists"
+        })
     }
-
-
-    //create track route and logic for post method
-    // n
-    if(req.params.object == 'tracks'){
-
-        // Check if the track already exist in the database
-        const trackNameExists = await Track.findOne({"trackname": req.body.email})
-
-        // If track already exists return bad request
-        if(trackNameExists){
-            return res.status(400).json({
-                code: "track-exist",
-                message: "Track already exists"
-            })
-        }
-         // Create a new track with the data from the request body 
-         const track = new Track({
-            trackname: req.body.trackname,
-            trackmaster: req.body.trackmaster,
-            date_created: Date.now(),
-        })
-
-        // Save the track in the database
-        track.save((err, track) =>{
-            if(err){
-                return res.json({
-                    code: "failed",
-                    message: "Failed to save track data in database",
-                    error : err
-                })
-            }
-            return res.json({
-                code: "success",
-                message: "Track created",
-                result: {
-                    id: track.id,
-                    trackname: track.trackname,
-                    trackmaster: track.trackmaster,
-                    date_created: track.date_created
-                }
-            })
-        })
-    // Create a new track with the data from the request body
-    const user = new User({
-      trackname: req.body.trackname,
-      trackmaster: req.body.trackmaster,
-      date_created: Date.now(),
-    });
+      // Create a new track with the data from the request body 
+      const track = new Track({
+        track_name: req.body.track_name,
+        track_master: req.body.track_master,
+        date_created: Date.now(),
+    })
 
     // Save the track in the database
-    user.save((err, user) => {
-      if (err) {
+    track.save((err, track) =>{
+        if(err){
+            return res.json({
+                code: "failed",
+                message: "Failed to save track data in database",
+                error : err
+            })
+        }
         return res.json({
-          code: "failed",
-          message: "Failed to save track data in database",
-          error: err,
-        });
-      }
-      return res.json({
-        code: "success",
-        message: "Track created",
-        result: {
-          id: track.id,
-          trackname: track.trackname,
-          trackmaster: track.trackmaster,
-          date_created: track.date_created,
-        },
-      });
-    });
+            code: "success",
+            message: "Track created",
+            result: {
+                id: track.id,
+                track_name: track.track_name,
+                track_master: track.track_master,
+                date_created: track.date_created
+            }
+        })
+    })
   }
+
+  //create batch route and logic for post method
+  if(req.params.object == 'batch'){
+    // Check if the batch already exist in the database
+    const batchNameExists = await Batch.findOne({"batchname": req.body.batch_name})
+
+    // If batch already exists return bad request
+    if(batchNameExists){
+        return res.status(400).json({
+            code: "batch-exist",
+            message: "Batch already exists"
+        })
+    }
+      // Create a new batch with the data from the request body 
+      const batch = new Batch({
+        batch_name: req.body.batch_name,
+        date_created: Date.now(),
+    })
+
+    // Save the batch data in the database
+    batch.save((err, batch) =>{
+        if(err){
+            return res.json({
+                code: "failed",
+                message: "Failed to save batch data in database",
+                error : err
+            })
+        }
+        return res.json({
+            code: "success",
+            message: "batch created",
+            result: {
+                batch_name: batch.batchname,
+                date_created: batch.date_created
+            }
+        })
+    })
+  }
+
+
   // CREATING COURSE LOGIC BEGINS **************************************************************
   // Check if the request is '/course'
   if (req.params.object == "course") {

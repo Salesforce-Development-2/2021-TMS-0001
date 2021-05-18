@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
 const trackSchema = mongoose.Schema ({
-    trackname: {
+    track_name: {
         type: String,
         required: true
     },
-    trackmaster: String,
+    track_master: String,
     date_created: Date,
     course_id: [{
         type: mongoose.Schema.Types.ObjectID, 
