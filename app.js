@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require('express')
 const morgan = require("morgan");
 const joi = require("joi");
 const helmet = require("helmet");
@@ -11,9 +11,14 @@ const passportJwt = require("passport-jwt");
 // import routes
 const adminRoutes = require("./app/src/controllers/admin/admin");
 const userRoutes = require("./app/src/controllers/user/user");
-// const router = require("./src/controllers/commons/admin/commons");
 
-mongoose.connect('mongodb://localhost:27017/transcript', {useNewUrlParser: true, useUnifiedTopology: true},(err)=>{
+
+mongoose.connect('mongodb://localhost:27017/transcript', 
+{
+  useNewUrlParser: true, 
+  useUnifiedTopology: true
+},
+(err)=>{ 
   if(!err) console.log('Connected to db!');
 });
 

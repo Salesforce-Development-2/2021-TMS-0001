@@ -4,8 +4,10 @@ const User = require('../../models/user')
 const Role = require('../../models/role') 
 const Action = require('../../models/actions');
 const actions = require('../../models/actions');
+const Track = require('../../models/track');
 
 router.get('/:object', (req, res) =>{
+    res.send('welcome')
     // logic for updating the various objects will be put here
 })
 
@@ -72,10 +74,53 @@ router.post('/:object', async (req, res) => {
                 })
             })
         });
-
-
-
     }
+
+
+    //create track route and logic for post method
+    // n
+    if(req.params.object == 'tracks'){
+
+        // Check if the track already exist in the database
+        const trackNameExists = await Track.findOne({"trackname": req.body.email})
+
+        // If track already exists return bad request
+        if(trackNameExists){
+            return res.status(400).json({
+                code: "track-exist",
+                message: "Track already exists"
+            })
+        }
+         // Create a new track with the data from the request body 
+         const user = new User({
+            trackname: req.body.trackname,
+            trackmaster: req.body.trackmaster,
+            date_created: Date.now(),
+        })
+
+        // Save the track in the database
+        user.save((err, user) =>{
+            if(err){
+                return res.json({
+                    code: "failed",
+                    message: "Failed to save track data in database",
+                    error : err
+                })
+            }
+            return res.json({
+                code: "success",
+                message: "Track created",
+                result: {
+                    id: track.id,
+                    trackname: track.trackname,
+                    trackmaster: track.trackmaster,
+                    date_created: track.date_created
+                }
+            })
+        })
+    }
+
+    
 });
 
 router.put('/:object/:id', (req, res) =>{
