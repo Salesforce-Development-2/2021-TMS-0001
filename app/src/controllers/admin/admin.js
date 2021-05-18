@@ -14,7 +14,7 @@ router.get("/:object", (req, res) => {
 // parameter object will be replaced with users, tracks, courses and assessment
 router.post("/:object", async (req, res) => {
   // Check if the request is /users
-  if (req.params.object == "users") {
+  if (req.params.object == "user") {
     // Check if the email already exist in the database
     const emailExists = await User.findOne({ email: req.body.email });
 
