@@ -18,7 +18,7 @@ router.get("/:object", (req, res) => {
 // parameter object will be replaced with users, tracks, courses and assessment
 router.post("/:object", async (req, res) => {
   // Check if the request is /users
-  if (req.params.object == "users") {
+  if (req.params.object == "user") {
     // Check if the email already exist in the database
     const emailExists = await User.findOne({ email: req.body.email });
 
@@ -89,6 +89,51 @@ router.post("/:object", async (req, res) => {
         message: "Track already exists",
       });
     }
+<<<<<<< HEAD
+
+
+    //create track route and logic for post method
+    // n
+    if(req.params.object == 'tracks'){
+
+        // Check if the track already exist in the database
+        const trackNameExists = await Track.findOne({"trackname": req.body.email})
+
+        // If track already exists return bad request
+        if(trackNameExists){
+            return res.status(400).json({
+                code: "track-exist",
+                message: "Track already exists"
+            })
+        }
+         // Create a new track with the data from the request body 
+         const track = new Track({
+            trackname: req.body.trackname,
+            trackmaster: req.body.trackmaster,
+            date_created: Date.now(),
+        })
+
+        // Save the track in the database
+        track.save((err, track) =>{
+            if(err){
+                return res.json({
+                    code: "failed",
+                    message: "Failed to save track data in database",
+                    error : err
+                })
+            }
+            return res.json({
+                code: "success",
+                message: "Track created",
+                result: {
+                    id: track.id,
+                    trackname: track.trackname,
+                    trackmaster: track.trackmaster,
+                    date_created: track.date_created
+                }
+            })
+        })
+=======
     // Create a new track with the data from the request body
     const user = new User({
       trackname: req.body.trackname,
@@ -131,6 +176,7 @@ router.post("/:object", async (req, res) => {
         code: "course-exist",
         message: "Course already exist",
       });
+>>>>>>> 4c8fada75e3c1bb94edf6e69ce541ab42d59f823
     }
 
     // Create a new course with the data from the request body
