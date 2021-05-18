@@ -92,14 +92,14 @@ router.post('/:object', async (req, res) => {
             })
         }
          // Create a new track with the data from the request body 
-         const user = new User({
+         const track = new Track({
             trackname: req.body.trackname,
             trackmaster: req.body.trackmaster,
             date_created: Date.now(),
         })
 
         // Save the track in the database
-        user.save((err, user) =>{
+        track.save((err, track) =>{
             if(err){
                 return res.json({
                     code: "failed",
