@@ -8,12 +8,17 @@ const courseSchema = mongoose.Schema({
 
   coursemaster: {
     name: {
-      type: mongoose.Schema.Types.ObjectID,
-      ref: "User",
+      type: String,
       required: true,
     },
   },
-  courseduration: String,
+  user_id: [
+    {
+      type: mongoose.Schema.Types.ObjectID,
+      ref: "User",
+    },
+  ],
+  courseduration: Number,
   date_created: Date,
   date_updated: Date,
 });
