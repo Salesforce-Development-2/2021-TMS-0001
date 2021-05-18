@@ -1,10 +1,14 @@
+// CORE MODULES
 const express = require("express");
 const router = express.Router();
+
+// OUR OWN MODULES - FILES
 const User = require("../../models/user");
 const Role = require("../../models/role");
 const Action = require("../../models/actions");
 const actions = require("../../models/actions");
 const Track = require("../../models/track");
+const Course = require("../../models/course");
 
 router.get("/:object", (req, res) => {
   res.send("welcome");
