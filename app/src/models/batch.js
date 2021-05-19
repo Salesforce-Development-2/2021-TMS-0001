@@ -6,10 +6,15 @@ const batchSchema = mongoose.Schema ({
         required: true
     },
     date_created: Date,
-    user_id: [{
-        type: mongoose.Schema.Types.ObjectID, 
-        ref: 'User'}
-    ]
+    users: [
+        {
+         enrollment_date: Date,
+         user_id:{
+          type: mongoose.Schema.Types.ObjectID,
+          ref: "User",
+         }
+        },
+      ],
 })
 
 module.exports = mongoose.model("Batch", batchSchema);

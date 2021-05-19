@@ -10,10 +10,13 @@ const courseSchema = mongoose.Schema({
       type: String,
       required: true,
   },
-  user_id: [
+  users: [
     {
+     enrollment_date: Date,
+     user_id:{
       type: mongoose.Schema.Types.ObjectID,
       ref: "User",
+     }
     },
   ],
   course_duration: Number,

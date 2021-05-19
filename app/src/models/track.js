@@ -12,10 +12,15 @@ const trackSchema = mongoose.Schema ({
         ref: 'Course'}
         
     ],
-    user_id: [{
-        type: mongoose.Schema.Types.ObjectID, 
-        ref: 'User'}
-    ]
+    users: [
+        {
+         enrollment_date: Date,
+         user_id:{
+          type: mongoose.Schema.Types.ObjectID,
+          ref: "User",
+         }
+        },
+      ],
 })
 
 module.exports = mongoose.model("Track", trackSchema);
