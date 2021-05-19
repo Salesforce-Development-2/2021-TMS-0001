@@ -10,19 +10,10 @@ const Course = require("../../models/course");
 const Batch = require("../../models/batch");
 const Assessment = require("../../models/assessment");
 
-router.get("/:object", (req, res) => {
-  res.send("welcome");
-  // logic for updating the various objects will be put here
+
 
   // GET LOGIC FOR THE COURSE BEGINS HERE **************************************************
-// const modelMapper = {
-//     users: User,
-//     roles: Role,
-//     tracks: Track,
-//     courses: Course,
-//     batches: Batch,
-//     assessments: Assessment
-// }
+
 
 // Get all resources endpoint
 router.get("/:object", async (req, res) => {
@@ -283,10 +274,6 @@ router.post("/:object", async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-router.put("/:object/:id", (req, res) => {
-  // logic for updating the various objects will be put here
-=======
 
 
 router.put("/:object/:id", async (req, res) => {
@@ -307,7 +294,6 @@ router.put("/:object/:id", async (req, res) => {
         return res.json(value)
     })
     
->>>>>>> 1a2cbb5ef5c59c688d921ce8158767f0a9d6fee0
 });
 
 // Register a route to delete resources
