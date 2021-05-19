@@ -11,7 +11,7 @@ const passportJwt = require("passport-jwt");
 // import routes
 const adminRoutes = require("./app/src/controllers/admin/admin");
 const userRoutes = require("./app/src/controllers/user/user");
-
+const commonsRoutes = require('./app/src/controllers/commons/commons');
 
 mongoose.connect('mongodb://localhost:27017/transcript', 
 {
@@ -32,7 +32,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
 
-
+app.use(commonsRoutes);
 
 // STARTING THE SERVER
 const PORT = process.env.PORT || 3000;
