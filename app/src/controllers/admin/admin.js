@@ -15,7 +15,36 @@ router.get("/:object", (req, res) => {
   // logic for updating the various objects will be put here
 
   // GET LOGIC FOR THE COURSE BEGINS HERE **************************************************
+// const modelMapper = {
+//     users: User,
+//     roles: Role,
+//     tracks: Track,
+//     courses: Course,
+//     batches: Batch,
+//     assessments: Assessment
+// }
+
+// Get all resources endpoint
+router.get("/:object", async (req, res) => {
+    if(!global.modelMapper[req.params.object]) return res.status(404).json({
+      code: "not-found",
+      message: "The resource request is not found"
+    })
+
+    const data = await global.modelMapper[req.params.object].find()
+    if(data.length < 1){
+      return res.json({
+        code: "success",
+        message: "No record found",
+    })
+    }
+    return res.json({
+        code: "success",
+        message: "request granted",
+        result: data
+    })
 });
+
 
 // parameter object will be replaced with users, tracks, courses and assessment
 router.post("/:object", async (req, res) => {
@@ -254,10 +283,49 @@ router.post("/:object", async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 router.put("/:object/:id", (req, res) => {
   // logic for updating the various objects will be put here
+=======
+
+
+router.put("/:object/:id", async (req, res) => {
+  // logic for updating the various objects will be put here'
+    if(!global.modelMapper[req.params.object]) return res.status(404).json({
+        code: "not-found",
+        message: "The resource request is not found"
+    })
+    const object = await global.modelMapper[req.params.object].findById(req.params.id);
+    if(!object) return res.status(404).json({
+        code: "not-found",
+        message: "Resource not found"
+    })
+    for(const field of Object.keys(req.body)){
+        object[field] = req.body[field];
+    }
+    object.save((err, value) =>{
+        return res.json(value)
+    })
+    
+>>>>>>> 1a2cbb5ef5c59c688d921ce8158767f0a9d6fee0
 });
 
-router.delete("/:object/:id", (req, res) => {});
+// Register a route to delete resources
+router.delete("/:object/:id", async (req, res) => {
+
+    const object = await global.modelMapper[req.params.object].findById(req.params.id);
+    if(!object) return res.status(404).json({
+        code: "not-found",
+        message: "Resource not found"
+    })
+    await global.modelMapper[req.params.object].deleteOne({_id: req.params.id});
+    return res.json({
+        code: "success",
+        message: "resource deleted",
+        result: object
+    })
+
+
+});
 
 module.exports = router;
