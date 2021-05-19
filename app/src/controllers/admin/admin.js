@@ -10,9 +10,11 @@ const Course = require("../../models/course");
 const Batch = require("../../models/batch");
 const Assessment = require("../../models/assessment");
 
-router.get("/:object", (req, res) => {
-  res.send("welcome");
-  // logic for updating the various objects will be put here
+ router.get("/:object", async(req, res) => {
+  if (req.params.object == "tracks") {
+    const tracks = await Track.find().sort();
+    res.send(tracks)
+  }
 });
 
 // parameter object will be replaced with users, tracks, courses and assessment
