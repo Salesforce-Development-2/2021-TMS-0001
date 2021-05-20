@@ -277,23 +277,28 @@ router.post("/:object", async (req, res) => {
 
 
 router.put("/:object/:id", async (req, res) => {
+
   // logic for updating the various objects will be put here'
     if(!global.modelMapper[req.params.object]) return res.status(404).json({
         code: "not-found",
         message: "The resource request is not found"
     })
+
     let object = await global.modelMapper[req.params.object].findById(req.params.id);
+
     if(!object) return res.status(404).json({
         code: "not-found",
         message: "Resource not found"
     })
+
   for (const field of Object.keys(req.body)) {
+    
     if (field == "user_id") {
-      object.users.push({ enrollment_date: Date.now(), user_id: req.params.user_id })
+      object.users.push({ enrollment_date: Date.now(), user_id: req.body.user_id })
     }
     
     else if (field == "course_id") {
-      object.users.push({ enrollment_date: Date.now(), course_id: req.params.course_id })
+      object.courses.push({ enrollment_date: Date.now(), course_id: req.body.course_id })
     }
       
     else {

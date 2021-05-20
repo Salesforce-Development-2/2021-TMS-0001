@@ -7,10 +7,12 @@ const trackSchema = mongoose.Schema ({
     },
     track_master: String,
     date_created: Date,
-    course_id: [{
-        type: mongoose.Schema.Types.ObjectID, 
-        ref: 'Course'}
-        
+    courses: [{
+        enrollment_date: Date,
+        course_id:{
+            type: mongoose.Schema.Types.ObjectID, 
+            ref: 'Course'}
+        }
     ],
     users: [
         {
