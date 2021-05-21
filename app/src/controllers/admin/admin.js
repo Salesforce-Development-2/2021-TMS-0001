@@ -10,7 +10,7 @@ const Course = require("../../models/course");
 const Batch = require("../../models/batch");
 const Assessment = require("../../models/assessment");
 
-
+const validation = require("../validations");
 
   // GET LOGIC FOR THE COURSE BEGINS HERE **************************************************
 
@@ -41,6 +41,16 @@ router.get("/:object", async (req, res) => {
 router.post("/:object", async (req, res) => {
   // Check if the request is /users
   if (req.params.object == "user") {
+
+    // Validate the incoming data
+    const {error} = await validation.userValidation(req.body);
+
+    if(error){
+      return res.status(400).json({
+        code: "invalid-data",
+        err : error.message
+      })
+    }
     // Check if the email already exist in the database
     const emailExists = await User.findOne({ email: req.body.email });
 
@@ -67,7 +77,6 @@ router.post("/:object", async (req, res) => {
         firstname: req.body.firstname,
         lastname: req.body.lastname,
         password: req.body.password,
-        username: req.body.username,
         email: req.body.email,
         role_type: role.id,
         date_created: Date.now(),
@@ -279,12 +288,26 @@ router.post("/:object", async (req, res) => {
 router.put("/:object/:id", async (req, res) => {
 
   // logic for updating the various objects will be put here'
-    if(!global.modelMapper[req.params.object]) return res.status(404).json({
+    if(!modelMapper[req.params.object]) return res.status(404).json({
         code: "not-found",
         message: "The resource request is not found"
     })
 
-    let object = await global.modelMapper[req.params.object].findById(req.params.id);
+    if(req.params.object == 'users'){
+          // Validate the incoming data
+      const {error} = await validation.userValidation(req.body);
+
+      if(error){
+        return res.status(400).json({
+          code: "invalid-data",
+          err : error.message
+        })
+      }
+      const role = await Role.findOne({role_type: req.body.role_type})
+      req.body.role_type = role.role_type;
+    }
+
+    let object = await modelMapper[req.params.object].findById(req.params.id);
 
     if(!object) return res.status(404).json({
         code: "not-found",
@@ -307,6 +330,12 @@ router.put("/:object/:id", async (req, res) => {
     }
   }
     object.save((err, value) =>{
+        if(err){
+          return res.status(500).json({
+            code: "failed",
+            err: "Not able to save in database"
+          })
+        }
         return res.json(value)
     })
     
