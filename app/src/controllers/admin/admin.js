@@ -44,7 +44,6 @@ router.post("/:object", async (req, res) => {
 
     // Validate the incoming data
     const {error} = await validation.userValidation(req.body);
-
     if(error){
       return res.status(400).json({
         code: "invalid-data",
@@ -126,6 +125,15 @@ router.post("/:object", async (req, res) => {
 
   //create track route and logic for post method
   if (req.params.object == "tracks") {
+    
+    //validate incomimg data
+    const {error} = await validation.trackValidation(req.body);
+    if(error){
+      return res.status(400).json({
+        code: "invalid-data",
+        err : error.message
+      })
+    }
     // Check if the track already exist in the database
     const trackNameExists = await Track.findOne({
       track_name: req.body.track_name,

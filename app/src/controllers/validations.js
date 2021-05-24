@@ -1,5 +1,6 @@
 const Joi = require('joi');
 
+// validation rules for user model
 const userSchema = Joi.object({
 
     firstname: Joi.string()
@@ -23,9 +24,26 @@ const userSchema = Joi.object({
     .required(),
 })
 
+//validation rules for track model
+const trackSchema = Joi.object({
+
+    track_name: Joi.string()
+        .max(100)
+        .required(),
+
+    track_master: Joi.string()
+    .max(100)
+    .required(),
+})
+
 module.exports = {
     userValidation: async function(data){
         const validation = await userSchema.validate(data);
+        return validation
+    },
+
+    trackValidation: async function(data){
+        const validation = await trackSchema.validate(data);
         return validation
     }
 }
