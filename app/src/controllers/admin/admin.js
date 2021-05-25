@@ -215,7 +215,7 @@ router.post("/:object", async (req, res) => {
   // CREATING COURSE LOGIC BEGINS **************************************************************
   // Check if the request is '/course'
   if (req.params.object == "course") {
-    // Validate the incoming data
+    // Validate the incoming data for course
     const { error } = await validation.courseValidation(req.body);
     if (error) {
       return res.status(400).json({
