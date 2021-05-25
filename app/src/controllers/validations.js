@@ -15,8 +15,8 @@ const userSchema = Joi.object({
 // VALIDATION FOR COURSES MODE BEGINS HERE ###################################################################
 
 const courseSchema = Joi.object({
-  course_name: Joi.string().max(50).required(),
-  course_master: Joi.string().max(50).required(),
+  course_name: Joi.string().min(6).max(50).required(),
+  course_master: Joi.string().min(6).max(50).required(),
   course_duration: Joi.string().required(),
 });
 
