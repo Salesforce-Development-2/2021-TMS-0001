@@ -12,43 +12,41 @@ const Assessment = require("../../models/assessment");
 
 const validation = require("../validations");
 
-  // GET LOGIC FOR THE COURSE BEGINS HERE **************************************************
-
+// GET LOGIC FOR THE COURSE BEGINS HERE **************************************************
 
 // Get all resources endpoint
 router.get("/:object", async (req, res) => {
-    if(!global.modelMapper[req.params.object]) return res.status(404).json({
+  if (!global.modelMapper[req.params.object])
+    return res.status(404).json({
       code: "not-found",
-      message: "The resource request is not found"
-    })
+      message: "The resource request is not found",
+    });
 
-    const data = await global.modelMapper[req.params.object].find()
-    if(data.length < 1){
-      return res.json({
-        code: "success",
-        message: "No record found",
-    })
-    }
+  const data = await global.modelMapper[req.params.object].find();
+  if (data.length < 1) {
     return res.json({
-        code: "success",
-        message: "request granted",
-        result: data
-    })
+      code: "success",
+      message: "No record found",
+    });
+  }
+  return res.json({
+    code: "success",
+    message: "request granted",
+    result: data,
+  });
 });
-
 
 // parameter object will be replaced with users, tracks, courses and assessment
 router.post("/:object", async (req, res) => {
   // Check if the request is /users
   if (req.params.object == "user") {
-
     // Validate the incoming data
-    const {error} = await validation.userValidation(req.body);
-    if(error){
+    const { error } = await validation.userValidation(req.body);
+    if (error) {
       return res.status(400).json({
         code: "invalid-data",
-        err : error.message
-      })
+        err: error.message,
+      });
     }
     // Check if the email already exist in the database
     const emailExists = await User.findOne({ email: req.body.email });
@@ -125,14 +123,13 @@ router.post("/:object", async (req, res) => {
 
   //create track route and logic for post method
   if (req.params.object == "tracks") {
-    
     //validate incomimg data
-    const {error} = await validation.trackValidation(req.body);
-    if(error){
+    const { error } = await validation.trackValidation(req.body);
+    if (error) {
       return res.status(400).json({
         code: "invalid-data",
-        err : error.message
-      })
+        err: error.message,
+      });
     }
     // Check if the track already exist in the database
     const trackNameExists = await Track.findOne({
@@ -218,6 +215,14 @@ router.post("/:object", async (req, res) => {
   // CREATING COURSE LOGIC BEGINS **************************************************************
   // Check if the request is '/course'
   if (req.params.object == "course") {
+    // Validate the incoming data
+    const { error } = await validation.courseValidation(req.body);
+    if (error) {
+      return res.status(400).json({
+        code: "invalid-data",
+        err: error.message,
+      });
+    }
     // Check if the course_name already exist in the database
     const courseNameExists = await Course.findOne({
       course_name: req.body.course_name,
@@ -291,83 +296,81 @@ router.post("/:object", async (req, res) => {
   }
 });
 
-
-
 router.put("/:object/:id", async (req, res) => {
-
   // logic for updating the various objects will be put here'
-    if(!modelMapper[req.params.object]) return res.status(404).json({
-        code: "not-found",
-        message: "The resource request is not found"
-    })
+  if (!modelMapper[req.params.object])
+    return res.status(404).json({
+      code: "not-found",
+      message: "The resource request is not found",
+    });
 
-    if(req.params.object == 'users'){
-          // Validate the incoming data
-      const {error} = await validation.userValidation(req.body);
+  if (req.params.object == "users") {
+    // Validate the incoming data
+    const { error } = await validation.userValidation(req.body);
 
-      if(error){
-        return res.status(400).json({
-          code: "invalid-data",
-          err : error.message
-        })
-      }
-      const role = await Role.findOne({role_type: req.body.role_type})
-      req.body.role_type = role.role_type;
+    if (error) {
+      return res.status(400).json({
+        code: "invalid-data",
+        err: error.message,
+      });
     }
+    const role = await Role.findOne({ role_type: req.body.role_type });
+    req.body.role_type = role.role_type;
+  }
 
-    let object = await modelMapper[req.params.object].findById(req.params.id);
+  let object = await modelMapper[req.params.object].findById(req.params.id);
 
-    if(!object) return res.status(404).json({
-        code: "not-found",
-        message: "Resource not found"
-    })
+  if (!object)
+    return res.status(404).json({
+      code: "not-found",
+      message: "Resource not found",
+    });
 
   for (const field of Object.keys(req.body)) {
-
     if (field == "user_id") {
-      object.users.push({ enrollment_date: Date.now(), user_id: req.body.user_id })
-    }
-    
-    else if (field == "course_id") {
-      object.courses.push({ enrollment_date: Date.now(), course_id: req.body.course_id })
-    }
-      
-    else {
-
+      object.users.push({
+        enrollment_date: Date.now(),
+        user_id: req.body.user_id,
+      });
+    } else if (field == "course_id") {
+      object.courses.push({
+        enrollment_date: Date.now(),
+        course_id: req.body.course_id,
+      });
+    } else {
       object[field] = req.body[field];
     }
   }
-    object.save((err, value) =>{
-        if(err){
-          return res.status(500).json({
-            code: "failed",
-            err: "Not able to save in database"
-          })
-        }
-        return res.json(value)
-    })
-    
+  object.save((err, value) => {
+    if (err) {
+      return res.status(500).json({
+        code: "failed",
+        err: "Not able to save in database",
+      });
+    }
+    return res.json(value);
+  });
 });
 
 // Register a route to delete resources
 router.delete("/:object/:id", async (req, res) => {
+  const object = await global.modelMapper[req.params.object].findById(
+    req.params.id
+  );
 
-    const object = await global.modelMapper[req.params.object].findById(req.params.id);
-    
-    if(!object) return res.status(404).json({
-        code: "not-found",
-        message: "Resource not found"
-    })
+  if (!object)
+    return res.status(404).json({
+      code: "not-found",
+      message: "Resource not found",
+    });
 
-    await global.modelMapper[req.params.object].deleteOne({_id: req.params.id});
+  await global.modelMapper[req.params.object].deleteOne({ _id: req.params.id });
 
-    return res.json({
-        code: "success",
-        message: "resource deleted",
-        result: object
-    })
-
-
+  return res.json({
+    code: "success",
+    message: "resource deleted",
+    result: object,
+  });
 });
 
 module.exports = router;
