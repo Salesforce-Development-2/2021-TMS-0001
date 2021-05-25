@@ -23,9 +23,30 @@ const userSchema = Joi.object({
     .required(),
 })
 
+
+const assessmentSchema = Joi.object({
+
+    scores: Joi.number()
+    .max(5)
+    .required(),
+
+    assessment_type: Joi.string()
+    .max(30)
+    .required(),
+
+    assessment_date: Joi.date()
+    .required(),
+})
+
+
+
 module.exports = {
     userValidation: async function(data){
         const validation = await userSchema.validate(data);
+        return validation
+    },
+    assesmentValidation: async function (data) {
+        const validation = await assessmentSchema.validate(data);
         return validation
     }
 }
