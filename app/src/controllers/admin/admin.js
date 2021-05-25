@@ -40,8 +40,6 @@ router.get("/:object", async (req, res) => {
 router.post("/:object", async (req, res) => {
   // Check if the request is /users
   if (req.params.object == "user") {
-<<<<<<< HEAD
-=======
     // Validate the incoming data
     const { error } = await validation.userValidation(req.body);
     if (error) {
@@ -50,7 +48,6 @@ router.post("/:object", async (req, res) => {
         err: error.message,
       });
     }
->>>>>>> 82766a0d6f17477ddad449529689df6aff5d3111
     // Check if the email already exist in the database
     const emailExists = await User.findOne({ email: req.body.email });
 
@@ -313,7 +310,6 @@ router.post("/:object", async (req, res) => {
 
 router.put("/:object/:id", async (req, res) => {
   // logic for updating the various objects will be put here'
-<<<<<<< HEAD
     if(!global.modelMapper[req.params.object]) return res.status(404).json({
         code: "not-found",
         message: "The resource request is not found"
@@ -332,7 +328,7 @@ router.put("/:object/:id", async (req, res) => {
           err: error.message
         })
       }
-=======
+    }
   if (!modelMapper[req.params.object])
     return res.status(404).json({
       code: "not-found",
@@ -348,18 +344,11 @@ router.put("/:object/:id", async (req, res) => {
         code: "invalid-data",
         err: error.message,
       });
->>>>>>> 82766a0d6f17477ddad449529689df6aff5d3111
     }
     const role = await Role.findOne({ role_type: req.body.role_type });
     req.body.role_type = role.role_type;
   }
 
-<<<<<<< HEAD
-    if(!object) return res.status(404).json({
-        code: "not-found",
-        message: "Resource not found"
-    })
-=======
   let object = await modelMapper[req.params.object].findById(req.params.id);
 
   if (!object)
@@ -367,10 +356,9 @@ router.put("/:object/:id", async (req, res) => {
       code: "not-found",
       message: "Resource not found",
     });
->>>>>>> 82766a0d6f17477ddad449529689df6aff5d3111
 
   for (const field of Object.keys(req.body)) {
-    if (field == "user_id") {
+    if (field == "users") {
       object.users.push({
         enrollment_date: Date.now(),
         user_id: req.body.user_id,
@@ -384,12 +372,6 @@ router.put("/:object/:id", async (req, res) => {
       object[field] = req.body[field];
     }
   }
-<<<<<<< HEAD
-    object.save((err, value) =>{
-        return res.json(value)
-    })
-    
-=======
   object.save((err, value) => {
     if (err) {
       return res.status(500).json({
@@ -399,7 +381,6 @@ router.put("/:object/:id", async (req, res) => {
     }
     return res.json(value);
   });
->>>>>>> 82766a0d6f17477ddad449529689df6aff5d3111
 });
 
 // Register a route to delete resources
