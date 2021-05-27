@@ -1,4 +1,4 @@
-const express = require('express')
+const express = require("express");
 const morgan = require("morgan");
 const joi = require("joi");
 const helmet = require("helmet");
@@ -8,20 +8,23 @@ const mongoose = require("mongoose");
 const connectMongo = require("connect-mongo");
 const passportJwt = require("passport-jwt");
 
-// import routes
+// import routes - Our own files
 const adminRoutes = require("./app/src/controllers/admin/admin");
 const userRoutes = require("./app/src/controllers/user/user");
-const commonsRoutes = require('./app/src/controllers/commons/commons');
+const commonsRoutes = require("./app/src/controllers/commons/commons");
+// auth.js file - this file contain authentication scripts
+const auth = require("./app/src/controllers/auth");
 
-mongoose.connect('mongodb://localhost:27017/transcript', 
-{
-  useNewUrlParser: true, 
-  useUnifiedTopology: true
-},
-(err)=>{ 
-  if(!err) console.log('Connected to db!');
-});
-
+mongoose.connect(
+  "mongodb://localhost:27017/transcript",
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  },
+  (err) => {
+    if (!err) console.log("Connected to db!");
+  }
+);
 
 // Initialize app
 const app = express();
