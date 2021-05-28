@@ -33,7 +33,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Register a middleware to protect all the routes except the auth route
-app.use(function(req, res, next){
+app.use(async function(req, res, next){
 
   // If a client request comes to the auth route allow access
   if(req.url.startsWith('/auth')){
