@@ -7,7 +7,10 @@ const userSchema = mongoose.Schema({
   },
   lastname: String,
   password: String,
-  email: String,
+  email: {
+    type: String,
+    unique: true
+  },
   date_created: Date,
   date_updated: Date,
   role_type: {

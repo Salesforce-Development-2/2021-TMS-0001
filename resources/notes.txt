@@ -1,3 +1,0 @@
-SIGNUP | LOGOUT | LOGIN - https://www.makeschool.com/mediabook/oa/tutorials/reddit-clone-in-node-js/sign-up-and-login/
-1. Make a new controller file called /controllers/auth.js to put all our authentication routes.
-2. Remember to add this new controller as a require within app.js:

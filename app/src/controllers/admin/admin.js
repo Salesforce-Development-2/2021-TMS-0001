@@ -9,7 +9,7 @@ const Track = require("../../models/track");
 const Course = require("../../models/course");
 const Batch = require("../../models/batch");
 const Assessment = require("../../models/assessment");
-
+const validation = require("../validations");
 
 
 // GET LOGIC FOR THE COURSE BEGINS HERE **************************************************
@@ -83,7 +83,7 @@ router.post("/:object", async (req, res) => {
       // Save the user in the database
       user.save(async (err, user) => {
         if (err) {
-          return res.json({
+          return res.status(500).json({
             code: "failed",
             message: "Failed to save data in database",
             error: err,
@@ -348,8 +348,6 @@ router.put("/:object/:id", async (req, res) => {
     const role = await Role.findOne({ role_type: req.body.role_type });
     req.body.role_type = role.role_type;
   }
-
-  let object = await modelMapper[req.params.object].findById(req.params.id);
 
   if (!object)
     return res.status(404).json({
