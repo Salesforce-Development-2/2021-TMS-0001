@@ -7,11 +7,10 @@ const config = require("../app/src/config/config");
 const Role = require("../app/src/models/role");
 const User = require("../app/src/models/user");
 const jwt = require("jsonwebtoken");
-const User = require("../../models/user");
 
 // ROUTES
 // Login - POST
-router.post("/auth/login", function (req, res, next) {
+router.post("/login", function (req, res, next) {
   const email = req.body.email;
   const password = req.body.password;
   let loadedUser;
@@ -36,13 +35,15 @@ router.post("/auth/login", function (req, res, next) {
         error.statusCode = 401;
         throw error;
       }
-      // Generatw jwt token
+      // Generatw jwt token - If credentials are correct
       const token = jwt.sign(
         {
           email: loadedUser.email,
           user_id: loadedUser._id.toString(),
         },
+        // secrete key (secretKey) from config/config.js
         config.secretKey,
+        // token expires in 2h (2 hours)
         { expiresIn: "2h" }
       );
       res.status(200).json({

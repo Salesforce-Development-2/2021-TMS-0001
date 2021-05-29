@@ -36,7 +36,7 @@ app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
 
 // Login auth route - GET - "/auth/login"
-app.use("/auth/login", authRoute);
+app.use("/login", authRoute);
 
 app.use(commonsRoutes);
 
