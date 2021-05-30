@@ -272,15 +272,14 @@ router.post("/:object", async (req, res) => {
 
   //create assessment route and logic for post method
   if (req.params.object == "assessment") {
-
     //Validate the incoming data
-    const {error} = await validation.assessmentValidation(req.body);
+    const { error } = await validation.assessmentValidation(req.body);
 
-    if(error) {
+    if (error) {
       return res.status(400).json({
         code: "invalid-data",
-        err: error.message
-      })
+        err: error.message,
+      });
     }
 
     //Create new assessment with data from req body
@@ -310,25 +309,27 @@ router.post("/:object", async (req, res) => {
 
 router.put("/:object/:id", async (req, res) => {
   // logic for updating the various objects will be put here'
-    if(!global.modelMapper[req.params.object]) return res.status(404).json({
-        code: "not-found",
-        message: "The resource request is not found"
-    })
+  if (!global.modelMapper[req.params.object])
+    return res.status(404).json({
+      code: "not-found",
+      message: "The resource request is not found",
+    });
 
-    let object = await global.modelMapper[req.params.object].findById(req.params.id);
+  let object = await global.modelMapper[req.params.object].findById(
+    req.params.id
+  );
 
-    if(req.params.object == "assessment") {
-      
-      //Validate the incoming data
-      const {error} = await validation.assessmentValidation(req.body);
+  if (req.params.object == "assessment") {
+    //Validate the incoming data
+    const { error } = await validation.assessmentValidation(req.body);
 
-      if(error) {
-        return res.status(400).json({
-          code: "invalid-data",
-          err: error.message
-        })
-      }
+    if (error) {
+      return res.status(400).json({
+        code: "invalid-data",
+        err: error.message,
+      });
     }
+  }
   if (!modelMapper[req.params.object])
     return res.status(404).json({
       code: "not-found",

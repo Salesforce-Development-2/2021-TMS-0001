@@ -13,7 +13,7 @@ const adminRoutes = require("./app/src/controllers/admin/admin");
 const userRoutes = require("./app/src/controllers/user/user");
 const commonsRoutes = require("./app/src/controllers/commons/commons");
 // auth.js file - this file contain authentication scripts
-const auth = require("./app/src/controllers/auth");
+const authRoute = require("./app/src/controllers/auth/auth");
 
 mongoose.connect(
   "mongodb://localhost:27017/transcript",
@@ -107,6 +107,9 @@ app.use(async function(req, res, next){
 
 app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
+
+// Login auth route - GET - "/auth/login"
+app.use("/login", authRoute);
 
 app.use(commonsRoutes);
 
