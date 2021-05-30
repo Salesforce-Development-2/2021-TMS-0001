@@ -1,6 +1,7 @@
 // CORE MODULES
 const express = require("express");
 const router = express.Router;
+const bcrypt = require('bcrypt');
 
 // INTERNAL MODULES - FILES - OUR OWN MODULES
 const config = require("../app/src/config/config");
