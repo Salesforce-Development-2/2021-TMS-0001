@@ -122,7 +122,7 @@ router.post("/:object", async (req, res) => {
   }
 
   //create track route and logic for post method
-  if (req.params.object == "tracks") {
+  else if (req.params.object == "tracks") {
     //validate incomimg data
     const { error } = await validators.trackValidation(req.body);
     if (error) {
@@ -173,7 +173,7 @@ router.post("/:object", async (req, res) => {
   }
 
   //create batch route and logic for post method
-  if (req.params.object == "batch") {
+  else if (req.params.object == "batch") {
     // Check if the batch already exist in the database
     const batchNameExists = await Batch.findOne({
       batchname: req.body.batch_name,
@@ -214,7 +214,7 @@ router.post("/:object", async (req, res) => {
 
   // CREATING COURSE LOGIC BEGINS **************************************************************
   // Check if the request is '/course'
-  if (req.params.object == "course") {
+  else if (req.params.object == "course") {
     // Validate the incoming data for course
     const { error } = await validators.courseValidation(req.body);
     if (error) {
@@ -270,7 +270,7 @@ router.post("/:object", async (req, res) => {
   // CREATING COURSE LOGIC ENDS HERE **********************************************************
 
   //create assessment route and logic for post method
-  if (req.params.object == "assessment") {
+  else if (req.params.object == "assessment") {
     //Validate the incoming data
     const { error } = await validators.assessmentValidation(req.body);
 
@@ -304,6 +304,14 @@ router.post("/:object", async (req, res) => {
       });
     });
   }
+  
+  // If the request parameter <:object> is not any of these resources return 404
+  else{
+    return res.status(404).json({
+      code: "resource-not-found",
+      message: "The specified resource is not found"
+    })
+  } 
 });
 
 router.put("/:object/:id", async (req, res) => {
