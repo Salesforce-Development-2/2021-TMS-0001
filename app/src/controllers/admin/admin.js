@@ -53,7 +53,11 @@ router.post("/:object", async (req, res) => {
     }
 
     // If email already exists return bad request
+<<<<<<< HEAD
     if (await UserManager.getUserByEmail(req.body.email)) {
+=======
+    if (await UserHandler.getUserByEmail(req.body.email)) {
+>>>>>>> 2bec047c033b375b37c0392f663a1c27b8963dde
       return res.status(400).json({
         code: "email-exists",
         message: "Email already exists",
@@ -61,7 +65,11 @@ router.post("/:object", async (req, res) => {
     }
 
     //If the role doesn't exist return 404 of role doesn't exist
+<<<<<<< HEAD
     if (!(await UserManager.getUserRole(req.body.role_type))) {
+=======
+    if (!(await UserHandler.getUserRole(req.body.role_type))) {
+>>>>>>> 2bec047c033b375b37c0392f663a1c27b8963dde
       return res.status(404).json({
         code: "resource-not-found",
         message: "The specified role is not found",
@@ -69,7 +77,11 @@ router.post("/:object", async (req, res) => {
     }
 
     // Create a new user with the data from the request body
+<<<<<<< HEAD
     const savedUser = await UserManager.createUser({
+=======
+    const savedUser = await UserHandler.createUser({
+>>>>>>> 2bec047c033b375b37c0392f663a1c27b8963dde
       firstname: req.body.firstname,
       lastname: req.body.lastname,
       password: bcrypt.hashSync(req.body.password, 10),
@@ -88,7 +100,11 @@ router.post("/:object", async (req, res) => {
     }
 
     // update batch table
+<<<<<<< HEAD
     const updatedBatch = await BatchManager.enrollUser(
+=======
+    const updatedBatch = await BatchHandler.enrollUser(
+>>>>>>> 2bec047c033b375b37c0392f663a1c27b8963dde
       req.body.batch_name,
       savedUser._id
     );
@@ -112,7 +128,11 @@ router.post("/:object", async (req, res) => {
         lastname: savedUser.lastname,
         username: savedUser.username,
         email: savedUser.email,
+<<<<<<< HEAD
         role_type: await RoleManager.getUserRoleName(savedUser.role_type),
+=======
+        role_type: await RoleHandler.getUserRoleName(savedUser.role_type),
+>>>>>>> 2bec047c033b375b37c0392f663a1c27b8963dde
       },
     });
   }
