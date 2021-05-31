@@ -66,7 +66,6 @@ app.use(async function(req, res, next){
 
   // Get the <token> part
   const token = parts[1];
-
   // Verify the token with the secret key
   jwt.verify(token, config.secretKey, async function(err, payload){
 

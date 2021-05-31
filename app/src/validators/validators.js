@@ -11,6 +11,8 @@ const userSchema = Joi.object({
   email: Joi.string().email().required(),
 
   role_type: Joi.string().max(30).required(),
+
+  batch_name: Joi.string().max(30)
 });
 // VALIDATION FOR COURSES MODE BEGINS HERE ###################################################################
 
