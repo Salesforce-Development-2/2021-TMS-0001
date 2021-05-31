@@ -18,6 +18,7 @@ const userSchema = mongoose.Schema({
     ref: "Role",
     required: true,
   },
-});
+})
 
 module.exports = mongoose.model("User", userSchema);
+
