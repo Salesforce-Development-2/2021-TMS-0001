@@ -9,7 +9,7 @@ const Track = require("../../models/track");
 const Course = require("../../models/course");
 const Batch = require("../../models/batch");
 const Assessment = require("../../models/assessment");
-const validation = require("../validations");
+const validators = require("../../validators/validators");
 const bcrypt = require('bcrypt');
 
 // GET LOGIC FOR THE COURSE BEGINS HERE **************************************************
@@ -41,7 +41,7 @@ router.post("/:object", async (req, res) => {
   // Check if the request is /users
   if (req.params.object == "user") {
     // Validate the incoming data
-    const { error } = await validation.userValidation(req.body);
+    const { error } = await validators.userValidation(req.body);
     if (error) {
       return res.status(400).json({
         code: "invalid-data",
@@ -124,7 +124,7 @@ router.post("/:object", async (req, res) => {
   //create track route and logic for post method
   if (req.params.object == "tracks") {
     //validate incomimg data
-    const { error } = await validation.trackValidation(req.body);
+    const { error } = await validators.trackValidation(req.body);
     if (error) {
       return res.status(400).json({
         code: "invalid-data",
@@ -216,7 +216,7 @@ router.post("/:object", async (req, res) => {
   // Check if the request is '/course'
   if (req.params.object == "course") {
     // Validate the incoming data for course
-    const { error } = await validation.courseValidation(req.body);
+    const { error } = await validators.courseValidation(req.body);
     if (error) {
       return res.status(400).json({
         code: "invalid-data",
@@ -272,7 +272,7 @@ router.post("/:object", async (req, res) => {
   //create assessment route and logic for post method
   if (req.params.object == "assessment") {
     //Validate the incoming data
-    const { error } = await validation.assessmentValidation(req.body);
+    const { error } = await validators.assessmentValidation(req.body);
 
     if (error) {
       return res.status(400).json({
@@ -320,7 +320,7 @@ router.put("/:object/:id", async (req, res) => {
 
   if (req.params.object == "assessment") {
     //Validate the incoming data
-    const { error } = await validation.assessmentValidation(req.body);
+    const { error } = await validators.assessmentValidation(req.body);
 
     if (error) {
       return res.status(400).json({
@@ -337,7 +337,7 @@ router.put("/:object/:id", async (req, res) => {
 
   if (req.params.object == "users") {
     // Validate the incoming data
-    const { error } = await validation.userValidation(req.body);
+    const { error } = await validators.userValidation(req.body);
 
     if (error) {
       return res.status(400).json({
