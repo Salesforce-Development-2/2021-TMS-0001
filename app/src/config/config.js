@@ -6,6 +6,6 @@ module.exports = {
         password: 'administrator',
         firstname: 'Salami',
         lastname: 'Suleiman',
-        role_type: '60b4f0a4bcf0d4d04ac17f9e'
+        role_type: '60a2a5de7b8e7558492fcc5a'
     }
 }

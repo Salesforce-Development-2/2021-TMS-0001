@@ -19,9 +19,6 @@ class UserHandler {
       date_created: Date.now(),
     });
       
-      console.log(userRole)
-
-    // Save the user in the database
     // Save the user in the database
 
     const savedUser = await user.save();
