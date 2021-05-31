@@ -12,9 +12,9 @@ const Assessment = require("../../models/assessment");
 const validators = require("../../validators/validators");
 const bcrypt = require('bcrypt');
 
-const UserManager = require("../handlers/userManager");
-const BatchManager = require("../handlers/batchManager");
-const RoleManager = require("../handlers/roleManager");
+const UserManager = require("../Managers/userManager");
+const BatchManager = require("../Managers/batchManager");
+const RoleManager = require("../Managers/roleManager");
 // GET LOGIC FOR THE COURSE BEGINS HERE **************************************************
 
 // Get all resources endpoint
