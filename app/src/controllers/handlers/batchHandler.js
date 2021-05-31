@@ -1,3 +1,4 @@
+const Batch = require('../../models/batch');
 class BatchHandler{
     async enrollUser(batchName, userId) {
 
