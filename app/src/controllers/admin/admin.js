@@ -74,7 +74,7 @@ router.post("/:object", async (req, res) => {
       lastname: req.body.lastname,
       password: bcrypt.hashSync(req.body.password, 10),
       email: req.body.email,
-      role_type: role.id,
+      role_type: req.body.role_type,
       date_created: Date.now(),
     });
 
