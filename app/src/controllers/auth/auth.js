@@ -21,9 +21,10 @@ router.post("/login", async function (req, res, next) {
     .then((user) => {
       if (!user) {
         //   If user not found
-        const error = new Error("A User with this email could not be found!");
-        error.statusCode = 401;
-        throw error;
+        return res.status(401).json({
+          code: "user-not-found",
+          message: "The email specified is not found!",
+        })
       }
       // If user exist - validate the user
       loadedUser = user;
