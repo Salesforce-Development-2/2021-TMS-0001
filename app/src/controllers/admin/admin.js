@@ -12,6 +12,9 @@ const Assessment = require("../../models/assessment");
 const validators = require("../../validators/validators");
 const bcrypt = require('bcrypt');
 
+const UserHandler = require("../handlers/userHandler");
+const BatchHandler = require("../handlers/batchHandler");
+const RoleHandler = require("../handlers/roleHandler");
 // GET LOGIC FOR THE COURSE BEGINS HERE **************************************************
 
 // Get all resources endpoint
@@ -48,76 +51,69 @@ router.post("/:object", async (req, res) => {
         err: error.message,
       });
     }
-    // Check if the email already exist in the database
-    const emailExists = await User.findOne({ email: req.body.email });
 
     // If email already exists return bad request
-    if (emailExists) {
+    if (await UserHandler.getUserByEmail(req.body.email)) {
       return res.status(400).json({
         code: "email-exists",
         message: "Email already exists",
       });
     }
 
-    // Find the type of role with the role_type specified in the request body
-    Role.findOne({ role_type: req.body.role_type }, (err, role) => {
-      //If the role doesn't exist return 404 of role doesn't exist
-      if (!role) {
-        return res.status(404).json({
-          code: "resource-not-found",
-          message: "The specified role is not found",
-        });
-      }
-      
-      // Create a new user with the data from the request body
-      const user = new User({
-        firstname: req.body.firstname,
-        lastname: req.body.lastname,
-        password: bcrypt.hashSync(req.body.password, 10),
-        email: req.body.email,
-        role_type: role.id,
-        date_created: Date.now(),
+    //If the role doesn't exist return 404 of role doesn't exist
+    if (!(await UserHandler.getUserRole(req.body.role_type))) {
+      return res.status(404).json({
+        code: "resource-not-found",
+        message: "The specified role is not found",
       });
+    }
 
-      // Save the user in the database
-      user.save(async (err, user) => {
-        if (err) {
-          return res.status(500).json({
-            code: "failed",
-            message: "Failed to save data in database",
-            error: err,
-          });
-        }
-        // Find the batch with the batch name if it was provided
-        let batch_name = req.body.batch_name;
+    // Create a new user with the data from the request body
+    const savedUser = await UserHandler.createUser({
+      firstname: req.body.firstname,
+      lastname: req.body.lastname,
+      password: bcrypt.hashSync(req.body.password, 10),
+      email: req.body.email,
+      role_type: role.id,
+      date_created: Date.now(),
+    });
 
-        if (batch_name) {
-          const batch = await Batch.findOne({ batch_name: batch_name });
-
-          // if batch is not found return 404
-          if (!batch)
-            res.status(404).json({
-              code: "batch-not-found",
-              message: "batch is not found",
-            });
-          // set the user id of the batch with the specified
-          batch.user_id.push(user._id);
-          batch.save();
-        }
-
-        return res.json({
-          code: "success",
-          message: "User created",
-          result: {
-            id: user.id,
-            firstname: user.firstname,
-            lastname: user.lastname,
-            username: user.username,
-            email: user.email,
-            role_type: user.role_type,
-          },
-        });
+    // if it couldnt save return 500 error
+    if (!savedUser) {
+      return res.status(500).json({
+        code: "failed",
+        message: "Failed to save data in database",
+        error: err,
       });
+    }
+
+    // update batch table
+    const updatedBatch = await BatchHandler.enrollUser(
+      req.body.batch_name,
+      savedUser._id
+    );
+
+    // if updated batch is null return 404 batch not found
+    if (!updatedBatch) {
+      res.status(404).json({
+        code: "batch-not-found",
+        message: "batch is not found",
+      });
+    }
+
+    // If everything saved return 200 success
+
+    return res.json({
+      code: "success",
+      message: "User created",
+      result: {
+        id: savedUser.id,
+        firstname: savedUser.firstname,
+        lastname: savedUser.lastname,
+        username: savedUser.username,
+        email: savedUser.email,
+        role_type: await RoleHandler.getUserRoleName(savedUser.role_type),
+      },
     });
   }
 
