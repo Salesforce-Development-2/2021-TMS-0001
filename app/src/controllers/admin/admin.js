@@ -12,9 +12,9 @@ const Assessment = require("../../models/assessment");
 const validators = require("../../validators/validators");
 const bcrypt = require('bcrypt');
 
-const UserHandler = require("../handlers/userHandler");
-const BatchHandler = require("../handlers/batchHandler");
-const RoleHandler = require("../handlers/roleHandler");
+const UserManager = require("../handlers/userManager");
+const BatchManager = require("../handlers/batchManager");
+const RoleManager = require("../handlers/roleManager");
 // GET LOGIC FOR THE COURSE BEGINS HERE **************************************************
 
 // Get all resources endpoint
@@ -53,7 +53,7 @@ router.post("/:object", async (req, res) => {
     }
 
     // If email already exists return bad request
-    if (await UserHandler.getUserByEmail(req.body.email)) {
+    if (await UserManager.getUserByEmail(req.body.email)) {
       return res.status(400).json({
         code: "email-exists",
         message: "Email already exists",
@@ -61,7 +61,7 @@ router.post("/:object", async (req, res) => {
     }
 
     //If the role doesn't exist return 404 of role doesn't exist
-    if (!(await UserHandler.getUserRole(req.body.role_type))) {
+    if (!(await UserManager.getUserRole(req.body.role_type))) {
       return res.status(404).json({
         code: "resource-not-found",
         message: "The specified role is not found",
@@ -69,7 +69,7 @@ router.post("/:object", async (req, res) => {
     }
 
     // Create a new user with the data from the request body
-    const savedUser = await UserHandler.createUser({
+    const savedUser = await UserManager.createUser({
       firstname: req.body.firstname,
       lastname: req.body.lastname,
       password: bcrypt.hashSync(req.body.password, 10),
@@ -88,7 +88,7 @@ router.post("/:object", async (req, res) => {
     }
 
     // update batch table
-    const updatedBatch = await BatchHandler.enrollUser(
+    const updatedBatch = await BatchManager.enrollUser(
       req.body.batch_name,
       savedUser._id
     );
@@ -112,7 +112,7 @@ router.post("/:object", async (req, res) => {
         lastname: savedUser.lastname,
         username: savedUser.username,
         email: savedUser.email,
-        role_type: await RoleHandler.getUserRoleName(savedUser.role_type),
+        role_type: await RoleManager.getUserRoleName(savedUser.role_type),
       },
     });
   }

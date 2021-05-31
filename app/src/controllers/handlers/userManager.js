@@ -1,7 +1,8 @@
 const User = require("../../models/user");
 const Role = require("../../models/role");
 const bcrypt = require("bcrypt");
-class UserHandler {
+
+class UserManager {
   async getUserRole(role_type) {
       const role = await Role.findOne({ role_type: role_type });
       return role;
@@ -32,4 +33,4 @@ class UserHandler {
     return emailExists;
   }
 }
-module.exports = new UserHandler();
+module.exports = new UserManager();
