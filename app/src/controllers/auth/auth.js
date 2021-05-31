@@ -1,17 +1,17 @@
 // CORE MODULES
 const express = require("express");
-const router = express.Router;
+const router = express.Router();
 const bcrypt = require('bcrypt');
 
 // INTERNAL MODULES - FILES - OUR OWN MODULES
-const config = require("../app/src/config/config");
-const Role = require("../app/src/models/role");
-const User = require("../app/src/models/user");
+const config = require("../../config/config");
+const Role = require("../../models/role");
+const User = require("../../models/user");
 const jwt = require("jsonwebtoken");
 
 // ROUTES
 // Login - POST
-router.post("/login", function (req, res, next) {
+router.post("/login", async function (req, res, next) {
   const email = req.body.email;
   const password = req.body.password;
   let loadedUser;
@@ -29,7 +29,7 @@ router.post("/login", function (req, res, next) {
       loadedUser = user;
       return bcrypt.compare(password, user.password);
     })
-    .then((isEqual) => {
+    .then(async (isEqual) => {
       if (!isEqual) {
         // Wrong password - If password entered by the user is incorrect
         const error = new Error("The password is incorrect!");
@@ -47,9 +47,11 @@ router.post("/login", function (req, res, next) {
         // token expires in 2h (2 hours)
         { expiresIn: "2h" }
       );
+      const role = await Role.findById(loadedUser.role_type);
       res.status(200).json({
         token: token,
         user_id: loadedUser._id.toString(),
+        role_type: role.role_type
       });
     })
     //   If error - Inerna server error

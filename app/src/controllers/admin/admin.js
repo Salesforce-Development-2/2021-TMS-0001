@@ -10,7 +10,7 @@ const Course = require("../../models/course");
 const Batch = require("../../models/batch");
 const Assessment = require("../../models/assessment");
 const validation = require("../validations");
-
+const bcrypt = require('bcrypt');
 
 // GET LOGIC FOR THE COURSE BEGINS HERE **************************************************
 
@@ -68,13 +68,12 @@ router.post("/:object", async (req, res) => {
           message: "The specified role is not found",
         });
       }
-
+      
       // Create a new user with the data from the request body
       const user = new User({
         firstname: req.body.firstname,
         lastname: req.body.lastname,
-        password: req.body.password,
-        username: req.body.username,
+        password: bcrypt.hashSync(req.body.password, 10),
         email: req.body.email,
         role_type: role.id,
         date_created: Date.now(),

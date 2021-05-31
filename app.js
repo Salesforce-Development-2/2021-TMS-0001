@@ -5,8 +5,14 @@ const helmet = require("helmet");
 const favicon = require("serve-favicon");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-const connectMongo = require("connect-mongo");
-const passportJwt = require("passport-jwt");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
+// import models
+const User = require("./app/src/models/user");
+const Role = require("./app/src/models/role");
+
+
 
 // import routes - Our own files
 const adminRoutes = require("./app/src/controllers/admin/admin");
@@ -15,6 +21,8 @@ const commonsRoutes = require("./app/src/controllers/commons/commons");
 // auth.js file - this file contain authentication scripts
 const authRoute = require("./app/src/controllers/auth/auth");
 
+// import configuration
+const config = require("./app/src/config/config");
 mongoose.connect(
   "mongodb://localhost:27017/transcript",
   {
@@ -44,7 +52,6 @@ app.use(async function(req, res, next){
   // Else Authenticate
   // Extract the bearer token
   const authString = req.headers['authorization'];
-
   // If no token found return 401
   if(!authString){
       res.status(401).json({
@@ -77,10 +84,10 @@ app.use(async function(req, res, next){
         if(req.url.startsWith("/admin")){
 
           // Extract the user_id from the payload
-          const {_id} = payload;
+          const {user_id} = payload;
 
           // Use the id to find the user
-          const user = await User.findById(_id);
+          const user = await User.findById(user_id);
 
           // Find the role of the user
           const role = await Role.findById(user.role_type);
@@ -109,7 +116,7 @@ app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
 
 // Login auth route - GET - "/auth/login"
-app.use("/login", authRoute);
+app.use("/auth", authRoute);
 
 app.use(commonsRoutes);
 
@@ -118,3 +125,17 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+
+if (config.createSuperUser) {
+  const User = require('./app/src/models/user');
+
+  const admin = new User({
+    email: config.admin.email,
+    password: bcrypt.hashSync(config.admin.password, 10),
+    firstname: config.admin.firstname,
+    lastname: config.admin.lastname,
+    role_type: config.admin.role_type
+  })
+  admin.save();
+}
