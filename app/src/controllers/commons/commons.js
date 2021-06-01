@@ -10,6 +10,8 @@ const Course = require("../../models/course");
 const Batch = require("../../models/batch");
 const Assessment = require("../../models/assessment");
 
+const homePage = require('../../utils/ui')
+
 global.modelMapper = {
     users: User,
     roles: Role,
@@ -18,7 +20,9 @@ global.modelMapper = {
     batches: Batch,
     assessments: Assessment
 }
-
+router.get('/', (req, res) =>{
+    return res.send(homePage);
+})
 // Get details of one resource endpoint
 router.get("/:role/:object/:id", async (req, res) =>{
     if(req.params.role == "user" || req.params.role == "admin"){
