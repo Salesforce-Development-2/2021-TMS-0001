@@ -26,7 +26,7 @@ const authRoute = require("./app/src/controllers/auth/auth");
 // import configuration
 const config = require("./app/src/config/config");
 mongoose.connect(
-  "mongodb://localhost:27017/transcript",
+  config.mongoUri,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -50,9 +50,9 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 // Register a middleware to protect all the routes except the auth route
 app.use(async function (req, res, next) {
 
-  // If a client request comes to the auth route allow access
+  // If request comes to /admin or /users 
   if (req.url.startsWith('/admin') || req.url.startsWith('/users')) {
-    // Else Authenticate
+    // Authenticate
     // Extract the bearer token
     const authString = req.headers['authorization'];
     // If no token found return 401
@@ -104,7 +104,7 @@ app.use(async function (req, res, next) {
           })
         }
 
-        // If the route the request is trying to access is not admin allow access
+        // If the route the request is trying to access is not admin or user allow access
         else {
           next();
         }
@@ -112,9 +112,12 @@ app.use(async function (req, res, next) {
 
       }
     })
-  } else {
-    next();
-    return;
+
+  } 
+
+  else {
+      next();
+      return;
   }
 
 
