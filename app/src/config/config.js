@@ -3,7 +3,7 @@ module.exports = {
     secretKey: "kkkeje8vpawh57ttrcuwqwww.amalitechlkjeieije3u88jdggh./?",
     createSuperUser: false,
     createBatch: false,
-    createRole: true,
+    createRole: false,
     admin: {
         email: 'admin@amalitech.org',
         password: 'administrator',

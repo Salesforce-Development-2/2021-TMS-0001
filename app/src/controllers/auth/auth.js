@@ -29,6 +29,7 @@ router.post("/login", async function (req, res, next) {
       // If user exist - validate the user
       loadedUser = user;
       return bcrypt.compare(password, user.password);
+      
     })
     .then(async (isEqual) => {
       if (!isEqual) {
