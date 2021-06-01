@@ -33,9 +33,10 @@ router.post("/login", async function (req, res, next) {
     .then(async (isEqual) => {
       if (!isEqual) {
         // Wrong password - If password entered by the user is incorrect
-        const error = new Error("The password is incorrect!");
-        error.statusCode = 401;
-        throw error;
+        return res.status(401).json({
+          code: "Unauthorized",
+          message: "Wrong Credentials"
+        })
       }
       // Generatw jwt token - If credentials are correct
       const token = jwt.sign(
