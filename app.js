@@ -33,6 +33,21 @@ mongoose.connect(
   },
   (err) => {
     if (!err) console.log("Connected to db!");
+    if (config.createSuperUser) {
+      const User = require('./app/src/models/user');
+      Role.findOne({role_type: config.admin.role_type})
+      .then(role =>{
+        const admin = new User({
+          email: config.admin.email,
+          password: bcrypt.hashSync(config.admin.password, 10),
+          firstname: config.admin.firstname,
+          lastname: config.admin.lastname,
+          role_type: role._id
+        })
+        admin.save();
+      });
+    
+    }
   }
 );
 
@@ -139,15 +154,4 @@ app.listen(PORT, () => {
 });
 
 
-if (config.createSuperUser) {
-  const User = require('./app/src/models/user');
 
-  const admin = new User({
-    email: config.admin.email,
-    password: bcrypt.hashSync(config.admin.password, 10),
-    firstname: config.admin.firstname,
-    lastname: config.admin.lastname,
-    role_type: config.admin.role_type
-  })
-  admin.save();
-}
