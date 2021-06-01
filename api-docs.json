@@ -12,7 +12,7 @@
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
-  "host": "amalitech-tms.herokuapp.com",
+  "host": "localhost:3000",
   "basePath": "",
   "tags": [
     {
@@ -284,7 +284,7 @@
   "securityDefinitions": {
     "api_key": {
       "type": "apiKey",
-      "name": "api_key",
+      "name": "Authorization",
       "in": "header"
     }
   },
@@ -311,7 +311,8 @@
       "required": [
         "email",
         "firstname",
-        "lastname"
+        "lastname",
+        "password"
       ],
       "properties": {
         "firstname": {
@@ -326,9 +327,9 @@
           "type": "string",
           "example": "batch1"
         },
-        "current_track": {
+        "password": {
           "type": "string",
-          "example": "SalesForce"
+          "example": "user1234"
         },
         "role_type": {
           "type": "string",

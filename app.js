@@ -7,7 +7,7 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const cors = require("cors");
 // import models
 const User = require("./app/src/models/user");
 const Role = require("./app/src/models/role");
@@ -48,12 +48,25 @@ mongoose.connect(
       });
     
     }
+    if (config.createBatch){
+      const Batch = require("./app/src/models/batch");
+      const batch = new Batch({
+        batch_name: config.batch.batch_name
+      })
+      batch.save();
+    }
+    if(config.createRole){
+      const role = new Role({
+        role_type: config.role.role_type
+      })
+      role.save();
+    }
   }
 );
 
 // Initialize app
 const app = express();
-
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
