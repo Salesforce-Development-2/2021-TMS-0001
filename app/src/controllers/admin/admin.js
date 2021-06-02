@@ -72,7 +72,11 @@ router.post("/:object", async (req, res) => {
     const savedUser = await UserManager.createUser({
       firstname: req.body.firstname,
       lastname: req.body.lastname,
+<<<<<<< HEAD
       password: req.body.password,
+=======
+      password: bcrypt.hashSync(req.body.password, 10),
+>>>>>>> f247b0f1aa3b5c1d7676eebb5372722c9ff1152f
       email: req.body.email,
       role_type: req.body.role_type,
       date_created: Date.now(),

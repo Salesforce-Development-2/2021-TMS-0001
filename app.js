@@ -95,6 +95,7 @@ app.use(async function (req, res, next) {
     // Else split 'Bearer' and <token>
     const parts = authString.split(" ");
 
+<<<<<<< HEAD
     // Get the <token> part
     const token = parts[1];
     // Verify the token with the secret key
@@ -108,6 +109,21 @@ app.use(async function (req, res, next) {
           error: err
         })
       }
+=======
+  // Get the <token> part
+  const token = parts[1];
+  // Verify the token with the secret key
+  jwt.verify(token, config.secretKey, async function(err, payload){
+
+    // If unable to verify return unauthorized
+      if(err){
+          res.status(401).json({
+              code: 'authentication-failed',
+              message: 'An error occured',
+              error: err
+          })
+      } 
+>>>>>>> f247b0f1aa3b5c1d7676eebb5372722c9ff1152f
 
       // If it passes verification check if the route the request is coming to is the admin route
       else {
