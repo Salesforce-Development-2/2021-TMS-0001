@@ -4,9 +4,9 @@ const bcrypt = require("bcrypt");
 
 class UserManager {
   async getUserRole(role_type) {
-      const role = await Role.findOne({ role_type: role_type });
-      return role;
-    
+    const role = await Role.findOne({ role_type: role_type });
+    return role;
+
   }
   async createUser(newUser) {
     // Create a new user with the data from the request body
@@ -19,14 +19,23 @@ class UserManager {
       role_type: userRole._id,
       date_created: Date.now(),
     });
-      
+
     // Save the user in the database
 
     const savedUser = await user.save();
 
     return savedUser;
   }
-  async editUser(user) {}
+  async editUser(user) { }
+  async getUser(userId) {
+    // Get the user from database
+    const user = await User.findOne({ _id: userId }).populate({ path: 'role_type', select: 'role_type -_id' });
+    return user;
+  }
+  async getUsers(){
+    const users = await User.find().populate({ path: 'role_type', select: 'role_type -_id' });
+    return users;
+  }
   async getUserByEmail(email) {
     // Check if the email already exist in the database
     const emailExists = await User.findOne({ email: email });

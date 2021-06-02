@@ -17,9 +17,12 @@ const swaggerUI = require('swagger-ui-express');
 
 
 // import routes - Our own files
-const adminRoutes = require("./app/src/controllers/admin/admin");
-const userRoutes = require("./app/src/controllers/user/user");
-const commonsRoutes = require("./app/src/controllers/commons/commons");
+const usersRoute = require("./app/src/controllers/users");
+const assessmentsRoute = require("./app/src/controllers/assessments");
+const tracksRoute = require("./app/src/controllers/tracks");
+const coursesRoute = require("./app/src/controllers/courses");
+const batchesRoute = require("./app/src/controllers/batch");
+
 // auth.js file - this file contain authentication scripts
 const authRoute = require("./app/src/controllers/auth/auth");
 
@@ -48,19 +51,6 @@ mongoose.connect(
       });
     
     }
-    if (config.createBatch){
-      const Batch = require("./app/src/models/batch");
-      const batch = new Batch({
-        batch_name: config.batch.batch_name
-      })
-      batch.save();
-    }
-    if(config.createRole){
-      const role = new Role({
-        role_type: config.role.role_type
-      })
-      role.save();
-    }
   }
 );
 
@@ -79,7 +69,8 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 app.use(async function (req, res, next) {
 
   // If request comes to /admin or /users 
-  if (req.url.startsWith('/admin') || req.url.startsWith('/users')) {
+  if(req.url.startsWith('/auth') || req.url.startsWith('/api-docs') ) next();
+  else {
     // Authenticate
     // Extract the bearer token
     const authString = req.headers['authorization'];
@@ -95,21 +86,6 @@ app.use(async function (req, res, next) {
     // Else split 'Bearer' and <token>
     const parts = authString.split(" ");
 
-<<<<<<< HEAD
-    // Get the <token> part
-    const token = parts[1];
-    // Verify the token with the secret key
-    jwt.verify(token, config.secretKey, async function (err, payload) {
-
-      // If unable to verify return unauthorized
-      if (err) {
-        res.status(401).json({
-          code: 'authentication-failed',
-          message: 'An error occured',
-          error: err
-        })
-      }
-=======
   // Get the <token> part
   const token = parts[1];
   // Verify the token with the secret key
@@ -123,58 +99,34 @@ app.use(async function (req, res, next) {
               error: err
           })
       } 
->>>>>>> f247b0f1aa3b5c1d7676eebb5372722c9ff1152f
 
       // If it passes verification check if the route the request is coming to is the admin route
       else {
-        if (req.url.startsWith("/admin")) {
+        // Extract the user_id from the payload
+        const { user_id } = payload;
 
-          // Extract the user_id from the payload
-          const { user_id } = payload;
+        // Use the id to find the user
+        const user = await User.findById(user_id).populate('role_type');
 
-          // Use the id to find the user
-          const user = await User.findById(user_id);
+        req.user = user;
 
-          // Find the role of the user
-          const role = await Role.findById(user.role_type);
-
-          // If the user is an admin allow access
-          if (role.role_type == "admin") next();
-
-          // If the user is not admin return 401
-          else res.status(401).json({
-            code: "unathorized",
-            message: "User is not admin"
-          })
-        }
-
-        // If the route the request is trying to access is not admin or user allow access
-        else {
-          next();
-        }
-
-
+        next();
       }
     })
 
   } 
 
-  else {
-      next();
-      return;
-  }
-
-
 
 });
 
-app.use("/admin", adminRoutes);
-app.use("/user", userRoutes);
+app.use("/users", usersRoute);
+app.use("/tracks", tracksRoute);
+app.use("/batches", batchesRoute);
+app.use("/courses", coursesRoute);
+app.use("/assessments", assessmentsRoute);
 
 // Login auth route - GET - "/auth/login"
 app.use("/auth", authRoute);
-
-app.use(commonsRoutes);
 
 // STARTING THE SERVER
 const PORT = process.env.PORT || 3000;
