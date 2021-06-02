@@ -1,5 +1,5 @@
 const Batch = require('../../models/batch');
-class BatchHandler{
+class BatchManager{
     async enrollUser(batchName, userId) {
 
         // Find the batch with the batch name if it was provided
@@ -14,4 +14,4 @@ class BatchHandler{
     }
 }
 
-module.exports = new BatchHandler();
+module.exports = new BatchManager();
