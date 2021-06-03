@@ -11,11 +11,11 @@ const Assessment = require("../models/assessment");
 const validators = require("../validators/validators");
 const bcrypt = require('bcrypt');
 
-// Import managers to hanlde database operations
-const UserManager = require("./managers/userManager");
-const BatchManager = require("./managers/batchManager");
-const RoleManager = require("./managers/roleManager");
-const TrackManager = require("./managers/trackManager");
+// Import services to hanlde database operations
+const userService = require("../services/userService");
+const batchService = require("../services/batchService");
+const roleService = require("../services/roleService");
+const trackServie = require("../services/trackService");
 
 router.post('/', async (req, res) =>{
       // Check if the request is '/course'

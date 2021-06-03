@@ -11,11 +11,11 @@ const Assessment = require("../models/assessment");
 const validators = require("../validators/validators");
 const bcrypt = require('bcrypt');
 
-// Import managers to hanlde database operations
-const UserManager = require("./managers/userManager");
-const BatchManager = require("./managers/batchManager");
-const RoleManager = require("./managers/roleManager");
-const TrackManager = require("./managers/trackManager");
+// Import services to hanlde database operations
+const userService = require("../services/userService");
+const batchService = require("../services/batchService");
+const roleService = require("../services/roleService");
+const trackService = require("../services/trackService");
 
 //create track route and logic for post method
 router.post("/", async (req, res) => {
@@ -35,7 +35,7 @@ router.post("/", async (req, res) => {
   }
 
   // If track already exists return bad request
-  if (await TrackManager.getTrackByName(req.body.track_name)) {
+  if (await trackService.getTrackByName(req.body.track_name)) {
     return res.status(400).json({
       code: "track-exist",
       message: "Track already exists",
@@ -45,7 +45,7 @@ router.post("/", async (req, res) => {
 
 
   // Save the track in the database
-  const savedTrack = await TrackManager.createTrack({
+  const savedTrack = await trackService.createTrack({
     track_name: req.body.track_name,
     track_master: req.body.track_master
   })
@@ -123,14 +123,14 @@ router.delete("/:id", async (req, res) => {
 
 router.get("/:id", async (req, res) =>{
   
-  const track = await TrackManager.getTrack(req.params.id);
+  const track = await trackService.getTrack(req.params.id);
 
   // If the request is not coming from an admin
   if(req.user.role_type.role_type != "admin"){
 
     // If the request user id is not the same as the request params id return 401
     // This is done because other users are not allowed to get other users details
-    if(!await TrackManager.isUserEnrolled(req.params.id, req.user.id)){
+    if(!await trackService.isUserEnrolled(req.params.id, req.user.id)){
       return res.status(401).json({
         code: "unauthorized",
         message: "User is not allowed to get other tracks details"

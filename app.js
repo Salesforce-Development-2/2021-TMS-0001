@@ -3,7 +3,7 @@ const morgan = require("morgan");
 const joi = require("joi");
 const helmet = require("helmet");
 const favicon = require("serve-favicon");
-const dotenv = require("dotenv");
+require('dotenv').config()
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");

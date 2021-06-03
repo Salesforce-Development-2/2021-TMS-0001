@@ -1,4 +1,4 @@
-const Role = require("../../models/role");
+const Role = require("../models/role");
 
 class RoleManager {
   async getUserRoleName(roleId) {

@@ -7,9 +7,9 @@ const Role = require("../models/role");
 const validators = require("../validators/validators");
 
 // Import managers to hanlde database operations
-const UserManager = require("./managers/userManager");
-const BatchManager = require("./managers/batchManager");
-const RoleManager = require("./managers/roleManager");
+const userService = require("../services/userService");
+const batchService = require("../services/batchService");
+const roleService = require("../services/roleService");
 
 
 router.post("/", async (req, res) =>{
@@ -31,7 +31,7 @@ router.post("/", async (req, res) =>{
     }
 
     // If email already exists return bad request
-    if (await UserManager.getUserByEmail(req.body.email)) {
+    if (await userService.getUserByEmail(req.body.email)) {
         return res.status(400).json({
         code: "email-exists",
         message: "Email already exists",
@@ -39,7 +39,7 @@ router.post("/", async (req, res) =>{
     }
 
     //If the role doesn't exist return 404 of role doesn't exist
-    if (!(await UserManager.getUserRole(req.body.role_type))) {
+    if (!(await userService.getUserRole(req.body.role_type))) {
         return res.status(404).json({
         code: "resource-not-found",
         message: "The specified role is not found",
@@ -47,7 +47,7 @@ router.post("/", async (req, res) =>{
     }
 
     // Create a new user with the data from the request body
-    const savedUser = await UserManager.createUser({
+    const savedUser = await userService.createUser({
         firstname: req.body.firstname,
         lastname: req.body.lastname,
         password: req.body.password,
@@ -66,7 +66,7 @@ router.post("/", async (req, res) =>{
     }
 
     // update batch table
-    const updatedBatch = await BatchManager.enrollUser(
+    const updatedBatch = await batchService.enrollUser(
         req.body.batch_name,
         savedUser._id
     );
@@ -90,7 +90,7 @@ router.post("/", async (req, res) =>{
           lastname: savedUser.lastname,
           username: savedUser.username,
           email: savedUser.email,
-          role_type: await RoleManager.getUserRoleName(savedUser.role_type),
+          role_type: await roleService.getUserRoleName(savedUser.role_type),
         },
     });
       
@@ -185,7 +185,7 @@ router.put("/:id" , async (req, res) => {
         })
       }
     }
-    const users = await UserManager.getUsers();
+    const users = await userService.getUsers();
     return res.json({
       code: "success",
       result: users
@@ -193,7 +193,7 @@ router.put("/:id" , async (req, res) => {
   })
   router.get("/:id", async (req, res) =>{
   
-    const user = await UserManager.getUser(req.params.id);
+    const user = await userService.getUser(req.params.id);
 
     // If the request is not coming from an admin
     if(req.user.role_type.role_type != "admin"){

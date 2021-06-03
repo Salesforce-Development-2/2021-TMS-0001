@@ -13,10 +13,10 @@ const validators = require("../validators/validators");
 const bcrypt = require('bcrypt');
 
 // Import managers to hanlde database operations
-const UserManager = require("./managers/userManager");
-const BatchManager = require("./managers/batchManager");
-const RoleManager = require("./managers/roleManager");
-const TrackManager = require("./managers/trackManager");
+const userService = require("../services/userService");
+const batchService = require("../services/batchService");
+const roleService = require("../services/roleService");
+const trackService = require("../services/trackService");
 
 router.post("/", async (req, res) =>{
       //create assessment route and logic for post method

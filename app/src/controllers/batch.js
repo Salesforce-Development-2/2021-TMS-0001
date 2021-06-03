@@ -6,7 +6,7 @@ const Batch = require("../models/batch");
 const validators = require("../validators/validators");
 
 // Import managers to hanlde database operations
-const BatchManager = require("./managers/batchManager");
+const batchService = require("../services/batchService");
 
 router.post("/", async (req, res) => {
 
