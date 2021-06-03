@@ -19,6 +19,8 @@ const trackService = require("../services/trackService");
 
 //create track route and logic for post method
 router.post("/", async (req, res) => {
+
+  // If the request user is not admin return 401
   if (req.user.role_type.role_type != "admin") {
     return res.status(401).json({
       code: "unauthorized",
@@ -41,20 +43,23 @@ router.post("/", async (req, res) => {
       message: "Track already exists",
     });
   }
+
+
   // Create a new track with the data from the request body
-
-
-  // Save the track in the database
   const savedTrack = await trackService.createTrack({
     track_name: req.body.track_name,
     track_master: req.body.track_master
   })
+
+  // If the track is null this means the track couldn't save
   if (!savedTrack) {
-    return res.json({
+    return res.status(500).json({
       code: "failed",
       message: "Failed to save track data in database",
     });
   }
+
+  // Return 200 if the track saved successfully
   return res.json({
     code: "success",
     message: "Track created",
@@ -67,8 +72,10 @@ router.post("/", async (req, res) => {
   });
 })
 
-
+// Register a route to edit track
 router.put("/:id", async (req, res) => {
+
+  // If the request user is not admin return 401
   if(req.user.role_type.role_type != "admin"){
     return res.status(401).json({
       code: "unauthorized",
@@ -76,9 +83,7 @@ router.put("/:id", async (req, res) => {
     })
   }
 
-  let track = await Track.findById(
-    req.params.id
-  );
+
 
   if (!track)
     return res.status(404).json({
@@ -86,9 +91,7 @@ router.put("/:id", async (req, res) => {
       message: "The resource request is not found",
     });
 
-  for (const field of Object.keys(req.body)) {
-    track[field] = req.body[field];
-  }
+
   track.save((err, value) => {
     if (err) {
       return res.status(500).json({

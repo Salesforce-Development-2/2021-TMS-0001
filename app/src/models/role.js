@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const roleSchema = mongoose.Schema({
-    role_type: String,
+    role_title: String,
     actions:[
         {type: mongoose.Schema.Types.ObjectID, ref: 'Action'}
     ]

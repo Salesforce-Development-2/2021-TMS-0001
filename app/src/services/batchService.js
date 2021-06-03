@@ -9,8 +9,9 @@ class BatchManager{
             enrollment_date: Date.now(),
             user_id: userId
         });
-        batch.users.enrollment_date = Date.now();
-        return batch.save()
+        const savedBatch = await batch.save()
+        if(savedBatch) return true;
+        return false;
     }
 }
 

@@ -48,7 +48,7 @@ router.post("/login", async function (req, res, next) {
         // secrete key (secretKey) from config/config.js
         config.secretKey,
         // token expires in 2h (2 hours)
-        { expiresIn: "2h" }
+        { expiresIn: "24h" }
       );
       const role = await Role.findById(loadedUser.role_type);
       res.status(200).json({

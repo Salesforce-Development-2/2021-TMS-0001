@@ -16,7 +16,7 @@ const userService = require("../services/userService");
 const batchService = require("../services/batchService");
 const roleService = require("../services/roleService");
 const trackServie = require("../services/trackService");
-
+const courseService = require("../services/courseService");
 router.post('/', async (req, res) =>{
       // Check if the request is '/course'
     // Validate the incoming data for course
@@ -72,39 +72,59 @@ router.post('/', async (req, res) =>{
 })
 
 
+// Register a route to edit course
 router.put("/:id", async (req, res) => {
-    let course = await Course.findById(
-      req.params.id
-    );
-  
 
-    if (!course)
-      return res.status(404).json({
-        code: "not-found",
-        message: "The resource request is not found",
+  let error;
+  // If request is not coming from an authorized admin reutrn 401
+  if (req.user.role_type.role_title != "admin") {
+    return res.status(401).json({
+      code: "unathorized",
+      message: "User is not allowed to edit a course"
+    })
+  }
+  let updatedCourse;
+
+  if(req.query.enroll){
+    updatedCourse = await courseService.enrollUser(req.params.id, req.query.enroll);
+    error = updatedCourse.error;
+  }
+  else if(req.query.unenroll){
+    updatedCourse = await courseService.unEnrollUser(req.params.id, req.query.unenroll);
+    error = updatedCourse.error;
+  }
+  else {
+      // Validate the incoming data
+    error  = await validators.courseValidation(req.body).error;
+
+    // return error if validation fails
+    if (error) {
+      return res.status(400).json({
+        code: "invalid-data",
+        err: error.message,
       });
-  
-    for (const field of Object.keys(req.body)) {
-      if (field == "users") {
-        course.users.push({
-          enrollment_date: Date.now(),
-          user_id: req.body.user_id,
-        });
-      }
-      else{
-        course[field] = req.body[field];
-      } 
     }
-    course.save((err, value) => {
-      if (err) {
-        return res.status(500).json({
-          code: "failed",
-          err: "Not able to save in database",
-        });
-      }
-      return res.json(value);
+    updatedCourse = await courseService.updateCourse(req.params.id, req.body);
+
+  }
+
+  // If the user is not updated return resource not found
+  if(error){
+    return res.status(400).json({
+      code: "not-found",
+      message: "An error occured",
+      error: error
     });
+  }
+
+  // if successful return 200 with result
+  return res.json({
+    code: "success",
+    message: "Course updated successfully",
+    result: updatedCourse
   });
+});
+
 
   
   router.delete("/:id", async (req, res) => {
