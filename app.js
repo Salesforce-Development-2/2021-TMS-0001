@@ -111,7 +111,6 @@ app.use(async function (req, res, next) {
 
         // Use the id to find the user
         const user = await User.findById(user_id).populate('role');
-
         req.user = user;
 
         next();

@@ -19,9 +19,8 @@ const trackService = require("../services/trackService");
 
 //create track route and logic for post method
 router.post("/", async (req, res) => {
-
   // If the request user is not admin return 401
-  if (req.user.role_type.role_type != "admin") {
+  if (req.user.role.role_title != "admin") {
     return res.status(401).json({
       code: "unauthorized",
       message: "User is not allowed to get create tracks"
