@@ -12,7 +12,7 @@ const userSchema = mongoose.Schema({
   },
   date_created: Date,
   date_updated: Date,
-  role_type: {
+  role: {
     type: mongoose.Schema.Types.ObjectID,
     ref: "Role",
     required: true,

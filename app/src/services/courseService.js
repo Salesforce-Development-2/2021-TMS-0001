@@ -1,6 +1,6 @@
 const Course = require('../models/course');
 const userService = require('./userService');
-class CourseManager{
+class CourseService{
     async getCourseByName(courseName){
         const course = await Course.findOne({course_name: courseName })
         return course;
@@ -96,4 +96,4 @@ class CourseManager{
     }
 }
 
-module.exports = new CourseManager();
+module.exports = new CourseService();

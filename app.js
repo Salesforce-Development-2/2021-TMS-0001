@@ -12,6 +12,8 @@ const cors = require("cors");
 const User = require("./app/src/models/user");
 const Role = require("./app/src/models/role");
 
+// import homepage html
+const homepage = require("./app/src/utils/ui");
 // import swagger
 const swaggerUI = require('swagger-ui-express');
 
@@ -63,7 +65,9 @@ app.use(express.urlencoded({ extended: false }));
 const swaggerDocument = require('./api-docs.json')
 
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
-
+app.get("/", (req, res) =>{
+  res.send(homepage);
+})
 
 // Register a middleware to protect all the routes except the auth route
 app.use(async function (req, res, next) {
@@ -106,7 +110,7 @@ app.use(async function (req, res, next) {
         const { user_id } = payload;
 
         // Use the id to find the user
-        const user = await User.findById(user_id).populate('role_type');
+        const user = await User.findById(user_id).populate('role');
 
         req.user = user;
 
@@ -118,6 +122,7 @@ app.use(async function (req, res, next) {
 
 
 });
+
 
 app.use("/users", usersRoute);
 app.use("/tracks", tracksRoute);

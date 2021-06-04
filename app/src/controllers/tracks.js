@@ -83,14 +83,11 @@ router.put("/:id", async (req, res) => {
     })
   }
 
-
-
   if (!track)
     return res.status(404).json({
       code: "not-found",
       message: "The resource request is not found",
     });
-
 
   track.save((err, value) => {
     if (err) {
@@ -103,18 +100,22 @@ router.put("/:id", async (req, res) => {
   });
 });
 
-
+// Register a route to delete track.
 router.delete("/:id", async (req, res) => {
+
+  // Find the track by id
   const track = await Track.findById(
     req.params.id
   );
 
+  // If the track is not found return 404
   if (!track)
     return res.status(404).json({
       code: "not-found",
       message: "Resource not found",
     });
 
+  // Delete the track
   let deletedTrack = await Track.deleteOne({ _id: req.params.id });
 
   return res.json({
@@ -124,8 +125,31 @@ router.delete("/:id", async (req, res) => {
   });
 });
 
+// Register a route to get all users
+router.get("/", async (req, res) => {
+
+  // If the request is coming from a user access level return 401
+  if (req.user.role.role_title != "admin") {
+    if (req.params.id != req.user.id) {
+      return res.status(401).json({
+        code: "unauthorized",
+        message: "User is not allowed to get all users"
+      })
+    }
+  }
+
+  // Get all tracks from the database
+  const tracks = await trackService.getTracks();
+  return res.json({
+    code: "success",
+    result: tracks
+  })
+})
+
+
 router.get("/:id", async (req, res) =>{
   
+  // Get the track from the database
   const track = await trackService.getTrack(req.params.id);
 
   // If the request is not coming from an admin
@@ -139,6 +163,8 @@ router.get("/:id", async (req, res) =>{
         message: "User is not allowed to get other tracks details"
       })
     }
+    
+    // 
     else{
       return res.json({
         code: "success",

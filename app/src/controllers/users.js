@@ -111,13 +111,14 @@ router.put("/:id", async (req, res) => {
   }
 
   // If request is not coming from an authorized admin reutrn 401
-
-  if (req.user.role_type.role_title != "admin") {
+  if (req.user.role.role_title != "admin") {
     return res.status(401).json({
       code: "unathorized",
       message: "User is not allowed to edit a user"
     })
   }
+
+  req.body.role = req.user.role._id;
 
   let updatedUser = await userService.updateUser(req.params.id, req.body);
 
@@ -163,7 +164,7 @@ router.delete("/:id", async (req, res) => {
 
 // Register a route to get all users
 router.get("/", async (req, res) => {
-  if (req.user.role_type.role_title != "admin") {
+  if (req.user.role.role_title != "admin") {
     if (req.params.id != req.user.id) {
       return res.status(401).json({
         code: "unauthorized",
@@ -185,7 +186,7 @@ router.get("/:id", async (req, res) => {
   const user = await userService.getUser(req.params.id);
 
   // If the request is not coming from an admin
-  if (req.user.role_type.role_title != "admin") {
+  if (req.user.role.role_title != "admin") {
 
     // If the request user's id is not the same as the request params id return 401
     // This is done because other users are not allowed to get other user's details
