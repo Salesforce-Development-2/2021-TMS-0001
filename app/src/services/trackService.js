@@ -137,7 +137,7 @@ class TrackService{
 
           // If the user id of the current track equals the userId parameter push it ot the result array
           if(user.user_id == userId) {
-            result.push({enrollment_date: user.enrollment_date, track_name: track.track_name});
+            result.push({enrollment_date: user.enrollment_date, track_name: track.track_name, track_master: track.track_master});
           }
         })
       })
