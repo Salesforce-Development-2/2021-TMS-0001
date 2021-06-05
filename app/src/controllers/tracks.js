@@ -152,15 +152,7 @@ router.delete("/:id", async (req, res) => {
 
 // Register a route to get all users
 router.get("/", async (req, res) => {
-  // If the request is coming from a user access level return 401
-  if (req.user.role.role_title != "admin") {
-    if (req.params.id != req.user.id) {
-      return res.status(401).json({
-        code: "unauthorized",
-        message: "User is not allowed to get all users"
-      })
-    }
-  }
+
 
   // if there users in the query parameters
   // Return the list of tracks the user has been enrolled in
@@ -173,6 +165,16 @@ router.get("/", async (req, res) => {
       result: userTracks
     })
   }
+
+    // If the request is coming from a user access level return 401
+    if (req.user.role.role_title != "admin") {
+      if (req.params.id != req.user.id) {
+        return res.status(401).json({
+          code: "unauthorized",
+          message: "User is not allowed to get all users"
+        })
+      }
+    }
 
   // Get all tracks from the database
   const tracks = await trackService.getTracks();
