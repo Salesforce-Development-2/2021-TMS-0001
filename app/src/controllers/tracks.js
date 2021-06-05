@@ -74,30 +74,56 @@ router.post("/", async (req, res) => {
 // Register a route to edit track
 router.put("/:id", async (req, res) => {
 
-  // If the request user is not admin return 401
-  if(req.user.role_type.role_type != "admin"){
+  let error;
+  // If request is not coming from an authorized admin reutrn 401
+  if (req.user.role.role_title != "admin") {
     return res.status(401).json({
-      code: "unauthorized",
-      message: "User is not allowed to get edit tracks"
+      code: "unathorized",
+      message: "User is not allowed to edit a track"
     })
   }
+  let updatedTrack;
 
-  if (!track)
-    return res.status(404).json({
-      code: "not-found",
-      message: "The resource request is not found",
-    });
+  if(req.query.enroll){
+    updatedTrack = await trackService.enrollUser(req.params.id, req.query.enroll);
+    error = updatedTrack.error;
+  }
+  else if(req.query.unenroll){
+    updatedTrack = await trackService.unEnrollUser(req.params.id, req.query.unenroll);
+    error = updatedTrack.error;
+  }
+  else {
+      // Validate the incoming data
+    error  = await validators.trackValidation(req.body).error;
 
-  track.save((err, value) => {
-    if (err) {
-      return res.status(500).json({
-        code: "failed",
-        err: "Not able to save in database",
+    // return error if validation fails
+    if (error) {
+      return res.status(400).json({
+        code: "invalid-data",
+        err: error.message,
       });
     }
-    return res.json(value);
+    updatedTrack = await trackService.updateTrack(req.params.id, req.body);
+
+  }
+
+  // If the user is not updated return resource not found
+  if(error){
+    return res.status(400).json({
+      code: "not-found",
+      message: "An error occured",
+      error: error
+    });
+  }
+
+  // if successful return 200 with result
+  return res.json({
+    code: "success",
+    message: "Track updated successfully",
+    result: updatedTrack
   });
 });
+
 
 // Register a route to delete track.
 router.delete("/:id", async (req, res) => {
@@ -126,7 +152,6 @@ router.delete("/:id", async (req, res) => {
 
 // Register a route to get all users
 router.get("/", async (req, res) => {
-
   // If the request is coming from a user access level return 401
   if (req.user.role.role_title != "admin") {
     if (req.params.id != req.user.id) {
@@ -135,6 +160,18 @@ router.get("/", async (req, res) => {
         message: "User is not allowed to get all users"
       })
     }
+  }
+
+  // if there users in the query parameters
+  // Return the list of tracks the user has been enrolled in
+
+  if(req.query.user){
+    
+    const userTracks = await trackService.getUserTracks(req.query.user);
+    return res.json({
+      code: "success",
+      result: userTracks
+    })
   }
 
   // Get all tracks from the database

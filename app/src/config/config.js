@@ -1,4 +1,4 @@
-const production = true;
+const production = false;
 module.exports = {
     secretKey: "kkkeje8vpawh57ttrcuwqwww.amalitechlkjeieije3u88jdggh./?",
     createSuperUser: false,
