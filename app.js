@@ -119,6 +119,7 @@ app.use(async function (req, res, next) {
 
 });
 
+// Middleware for Users, Tracks, Batches, Courses and Assessment Routes
 app.use("/users", usersRoute);
 app.use("/tracks", tracksRoute);
 app.use("/batches", batchesRoute);
