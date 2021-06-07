@@ -3,21 +3,24 @@ const Role = require("../models/role");
 const bcrypt = require("bcrypt");
 const trackService = require("./trackService");
 const track = require("../models/track");
+
+const roleService = require("./roleService");
+
 class UserService {
-  async getUserRole(role_type) {
-    const role = await Role.findOne({ role_type: role_type });
-    return role;
+  async getUserRole(role) {
+    const roleObject = await Role.findOne({ role_title: role });
+    return roleObject;
 
   }
   async createUser(newUser) {
     // Create a new user with the data from the request body
-    const userRole = await this.getUserRole(newUser.role_type);
+    const userRole = await this.getUserRole(newUser.role);
     const user = new User({
       firstname: newUser.firstname,
       lastname: newUser.lastname,
       password: bcrypt.hashSync(newUser.password, 10),
       email: newUser.email,
-      role_type: userRole._id,
+      role: userRole._id,
       date_created: Date.now(),
     });
 
@@ -35,12 +38,15 @@ class UserService {
 
     // if the user is not found return 404
     if (!user) return null;
-
-    // Update the fields of the user object
+    newUser.date_updated = Date.now();
+    // Update the fields of the course object
     for (const field of Object.keys(newUser)) {
       user[field] = newUser[field];
     }
-    return await user.save();
+    let updatedUser = await user.save();
+    updatedUser = updatedUser.toJSON();
+    updatedUser.role = await roleService.getUserRoleName(updatedUser.role);
+    return updatedUser
   }
   async getUser(userId) {
     let userDetails;

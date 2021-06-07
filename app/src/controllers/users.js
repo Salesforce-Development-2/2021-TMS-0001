@@ -15,7 +15,7 @@ const roleService = require("../services/roleService");
 router.post("/", async (req, res) => {
 
   // If request is not coming from an authorized admin reutrn 401
-  if (req.user.role_type.role_title != "admin") {
+  if (req.user.role.role_title != "admin") {
     return res.status(401).json({
       code: "unathorized",
       message: "User is not allowed to create a user"
@@ -39,7 +39,7 @@ router.post("/", async (req, res) => {
   }
 
   //If the role doesn't exist return 404 of role doesn't exist
-  if (!(await userService.getUserRole(req.body.role_type))) {
+  if (!(await userService.getUserRole(req.body.role))) {
     return res.status(404).json({
       code: "resource-not-found",
       message: "The specified role is not found",
@@ -52,7 +52,7 @@ router.post("/", async (req, res) => {
     lastname: req.body.lastname,
     password: req.body.password,
     email: req.body.email,
-    role_type: req.body.role_type,
+    role: req.body.role,
     date_created: Date.now(),
   });
 
@@ -90,7 +90,7 @@ router.post("/", async (req, res) => {
       lastname: savedUser.lastname,
       username: savedUser.username,
       email: savedUser.email,
-      role_type: await roleService.getUserRoleName(savedUser.role_type),
+      role: await roleService.getUserRoleName(savedUser.role),
     },
   });
 
@@ -111,13 +111,14 @@ router.put("/:id", async (req, res) => {
   }
 
   // If request is not coming from an authorized admin reutrn 401
-
-  if (req.user.role_type.role_title != "admin") {
+  if (req.user.role.role_title != "admin") {
     return res.status(401).json({
       code: "unathorized",
       message: "User is not allowed to edit a user"
     })
   }
+
+  req.body.role = req.user.role._id;
 
   let updatedUser = await userService.updateUser(req.params.id, req.body);
 
@@ -163,7 +164,7 @@ router.delete("/:id", async (req, res) => {
 
 // Register a route to get all users
 router.get("/", async (req, res) => {
-  if (req.user.role_type.role_title != "admin") {
+  if (req.user.role.role_title != "admin") {
     if (req.params.id != req.user.id) {
       return res.status(401).json({
         code: "unauthorized",
@@ -184,8 +185,9 @@ router.get("/:id", async (req, res) => {
   // Get the user from database
   const user = await userService.getUser(req.params.id);
 
+
   // If the request is not coming from an admin
-  if (req.user.role_type.role_title != "admin") {
+  if (req.user.role.role_title != "admin") {
 
     // If the request user's id is not the same as the request params id return 401
     // This is done because other users are not allowed to get other user's details

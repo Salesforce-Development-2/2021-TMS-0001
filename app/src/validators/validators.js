@@ -10,7 +10,7 @@ const userSchema = Joi.object({
 
   email: Joi.string().email().required(),
 
-  role_title: Joi.string().max(30).required(),
+  role: Joi.string().max(30).required(),
 
   batch_name: Joi.string().max(30)
 });

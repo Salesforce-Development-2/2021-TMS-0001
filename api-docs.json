@@ -20,8 +20,8 @@
       "description": "Secured Admin-only calls"
     },
     {
-      "name": "user",
-      "description": "Operations available to regular users"
+      "name": "all",
+      "description": "Operations available to both users and admins"
     },
     {
       "name": "auth",
@@ -29,10 +29,42 @@
     }
   ],
   "schemes": [
-    "https"
+    "https",
+    "http"
   ],
   "paths": {
-    "/admin/user": {
+    "/users": {
+      "get": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "gets all users",
+        "description": "By passing in the appropriate options, you can get all users info.\n",
+        "operationId": "getUsers",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "results of all the users in the database",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
       "post": {
         "tags": [
           "admins"
@@ -72,41 +104,13 @@
         ]
       }
     },
-    "/admin/users": {
+    "/users/{user_id}": {
       "get": {
         "tags": [
-          "admins"
-        ],
-        "summary": "gets all users",
-        "description": "By passing in the appropriate options, you can get all users info.\n",
-        "operationId": "getUsers",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "results of all the users in the database",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/User"
-              }
-            }
-          },
-          "400": {
-            "description": "bad input parameter"
-          }
-        }
-      }
-    },
-    "/admin/user/{user_id}": {
-      "get": {
-        "tags": [
-          "admins"
+          "all"
         ],
         "summary": "gets details of a user",
-        "description": "By passing in the appropriate options, you can get detail info about a user.",
+        "description": "By passing in the appropriate options, you can get detail info about a user. request with user access level can't view details of other users.",
         "operationId": "getUser",
         "produces": [
           "application/json"
@@ -160,32 +164,13 @@
             "type": "string"
           },
           {
-            "name": "firstname",
-            "in": "formData",
-            "description": "Updated firstname of the user",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "lastname",
-            "in": "formData",
-            "description": "Updated lastname of the user",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "email",
-            "in": "formData",
-            "description": "Updated email of the user",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "password",
-            "in": "formData",
-            "description": "Updated password of the user",
-            "required": false,
-            "type": "string"
+            "in": "body",
+            "name": "body",
+            "description": "User object that needs to be created",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
           }
         ],
         "responses": {
@@ -236,6 +221,648 @@
         "responses": {
           "404": {
             "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/courses": {
+      "get": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "gets all courses",
+        "description": "By passing in the appropriate options, you can get all users info.",
+        "operationId": "getCourses",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "results of all the courses in the database",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Course"
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "Creates a new course",
+        "operationId": "createCourse",
+        "consumes": [
+          "application/json",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Course object that needs to be created",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Course"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unathorized"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/courses/{course_id}": {
+      "get": {
+        "tags": [
+          "all"
+        ],
+        "summary": "gets details of a course",
+        "description": "By passing in the appropriate options, you can get detail info about a course. request with user access level can't view details of other courses.",
+        "operationId": "getCourse",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "course_id",
+            "in": "path",
+            "description": "ID of course info requested for",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "details of a course",
+            "schema": {
+              "$ref": "#/definitions/Course"
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "Updates a course with form data",
+        "description": "Update a particular course with form data",
+        "operationId": "updateCourse",
+        "consumes": [
+          "application/json",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "course_id",
+            "in": "path",
+            "description": "ID of course that needs to be updated",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "enroll",
+            "in": "query",
+            "description": "The id of the user to enroll in the course",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "course_name",
+            "in": "formData",
+            "description": "Updated course name of the course",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "course_master",
+            "in": "formData",
+            "description": "Updated course master of the course",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "user updated"
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          },
+          "401": {
+            "description": "unauthorized"
+          },
+          "404": {
+            "description": "not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "Deletes a course",
+        "operationId": "deleteCourse",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "api_key",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "course_id",
+            "in": "path",
+            "description": "course id to delete",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Course not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/tracks": {
+      "get": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "gets all tracks",
+        "description": "By passing in the appropriate options, you can get all tracks info.",
+        "operationId": "getTracks",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "results of all the tracks in the database",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Track"
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "Creates a new track",
+        "operationId": "createTrack",
+        "consumes": [
+          "application/json",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Track object that needs to be created",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Track"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unathorized"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/tracks/{track_id}": {
+      "get": {
+        "tags": [
+          "all"
+        ],
+        "summary": "gets details of a track",
+        "description": "By passing in the appropriate options, you can get detail info about a track. request with user access level can't view details of other tracks.",
+        "operationId": "getTrack",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "track_id",
+            "in": "path",
+            "description": "ID of track info requested for",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "details of a track",
+            "schema": {
+              "$ref": "#/definitions/Track"
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "Updates a track with form data",
+        "description": "Update a particular track with form data",
+        "operationId": "updateTrack",
+        "consumes": [
+          "application/json",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "track_id",
+            "in": "path",
+            "description": "ID of track that needs to be updated",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "enroll",
+            "in": "query",
+            "description": "The id of the user to enroll in the track",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "unenroll",
+            "in": "query",
+            "description": "The id of the user to unenroll from the track",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "addtrack",
+            "in": "query",
+            "description": "The id of the track to add to the track",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "track_name",
+            "in": "formData",
+            "description": "Updated track name of the track",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "track_master",
+            "in": "formData",
+            "description": "Updated track master of the track",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "user updated"
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          },
+          "401": {
+            "description": "unauthorized"
+          },
+          "404": {
+            "description": "not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "Deletes a track",
+        "operationId": "deleteTrack",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "api_key",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "track_id",
+            "in": "path",
+            "description": "track id to delete",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Track not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/assessments": {
+      "get": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "gets all Assessments",
+        "description": "By passing in the appropriate options, you can get all assessments info.",
+        "operationId": "getAssessments",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "user",
+            "in": "query",
+            "description": "ID of user's assessment requested for",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "results of all the assessments in the database",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Assessment"
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "Creates a new assessment",
+        "operationId": "createAssessment",
+        "consumes": [
+          "application/json",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Assessment object that needs to be created",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Assessment"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unathorized"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/assessments/{assessment_id}": {
+      "get": {
+        "tags": [
+          "all"
+        ],
+        "summary": "gets details of an assessment",
+        "description": "By passing in the appropriate options, you can get detail info about a assessment. request with user access level can't view details of other assessments.",
+        "operationId": "getAssessment",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "assessment_id",
+            "in": "path",
+            "description": "ID of assessment info requested for",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "details of an assessment",
+            "schema": {
+              "$ref": "#/definitions/Assessment"
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "Updates an assessment with form data",
+        "description": "Update a particular assessment with form data",
+        "operationId": "updateAssessment",
+        "consumes": [
+          "application/json",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "assessment_id",
+            "in": "path",
+            "description": "ID of assessment that needs to be updated",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "assessment_type",
+            "in": "formData",
+            "description": "Updated assessment type of the assessment",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "score",
+            "in": "formData",
+            "description": "Updated assessment score of the assessment",
+            "required": false,
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "assessment updated"
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          },
+          "401": {
+            "description": "unauthorized"
+          },
+          "404": {
+            "description": "not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "admins"
+        ],
+        "summary": "Deletes an assessment",
+        "operationId": "deleteAssessment",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "api_key",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "assessment_id",
+            "in": "path",
+            "description": "assessment id to delete",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Assessment not found"
           }
         },
         "security": [
@@ -312,7 +939,8 @@
         "email",
         "firstname",
         "lastname",
-        "password"
+        "password",
+        "role_title"
       ],
       "properties": {
         "firstname": {
@@ -331,13 +959,40 @@
           "type": "string",
           "example": "user1234"
         },
-        "role_type": {
+        "role_title": {
           "type": "string",
           "example": "user"
         },
         "email": {
           "type": "string",
           "example": "user1@amalitech.org"
+        }
+      }
+    },
+    "Track": {
+      "required": [
+        "track_name"
+      ],
+      "properties": {
+        "track_name": {
+          "type": "string",
+          "example": "SalesForce"
+        },
+        "track_master": {
+          "type": "string",
+          "example": "Salami"
+        },
+        "users": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          }
+        },
+        "courses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Course"
+          }
         }
       }
     },
@@ -359,6 +1014,35 @@
           "items": {
             "$ref": "#/definitions/User"
           }
+        }
+      }
+    },
+    "Assessment": {
+      "required": [
+        "assessment_date",
+        "assessment_type",
+        "course_id",
+        "score",
+        "user"
+      ],
+      "properties": {
+        "assessment_type": {
+          "type": "string",
+          "example": "Project"
+        },
+        "score": {
+          "type": "number",
+          "example": 78
+        },
+        "assessment_date": {
+          "type": "string",
+          "example": "15/05/2021"
+        },
+        "course_id": {
+          "type": "string"
+        },
+        "user": {
+          "type": "string"
         }
       }
     }

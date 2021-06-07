@@ -1,6 +1,6 @@
 const Course = require('../models/course');
 const userService = require('./userService');
-class CourseManager{
+class CourseService{
     async getCourseByName(courseName){
         const course = await Course.findOne({course_name: courseName })
         return course;
@@ -28,6 +28,12 @@ class CourseManager{
       });
 
       return course;
+    }
+
+    // Get all tracks from the database
+    async getCourses(){
+      const courses = await Course.find().select("-users");
+      return courses;
     }
 
     async getCourseLean(courseId){
@@ -71,7 +77,7 @@ class CourseManager{
           return userObject.user_id != userId;
         })
       await course.save();
-      return await {message: "successfully unenrolled " + (await userService.getUser(userId)).firstname };
+      return {message: "successfully unenrolled " + (await userService.getUser(userId)).firstname };
     }
     // returns an array of users enrolled in a course
     async getUsers(courseId){
@@ -94,6 +100,33 @@ class CourseManager{
        await course.save()
        return this.getCourseLean(courseId);
     }
+
+    async getUserCourses(userId){
+
+      // Declare an empty array to keep the resulting courses
+      let result = [];
+
+      // Fetch all courses from database
+      const courses = await Course.find();
+
+      // Loop through the tracks 
+      courses.forEach(course =>{
+
+        // For each track loop through the users object
+        course.users.forEach(user =>{
+
+          // If the user id of the current track equals the userId parameter push it ot the result array
+          if(user.user_id == userId) {
+            result.push({
+              enrollment_date: user.enrollment_date, 
+              course_name: course.course_name,
+              course_master: course.course_master
+            });
+          }
+        })
+      })
+      return result;
+    }
 }
 
-module.exports = new CourseManager();
+module.exports = new CourseService();

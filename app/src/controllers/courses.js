@@ -17,6 +17,7 @@ const batchService = require("../services/batchService");
 const roleService = require("../services/roleService");
 const trackServie = require("../services/trackService");
 const courseService = require("../services/courseService");
+
 router.post('/', async (req, res) =>{
       // Check if the request is '/course'
     // Validate the incoming data for course
@@ -77,7 +78,7 @@ router.put("/:id", async (req, res) => {
 
   let error;
   // If request is not coming from an authorized admin reutrn 401
-  if (req.user.role_type.role_title != "admin") {
+  if (req.user.role.role_title != "admin") {
     return res.status(401).json({
       code: "unathorized",
       message: "User is not allowed to edit a course"
@@ -125,6 +126,35 @@ router.put("/:id", async (req, res) => {
   });
 });
 
+// Register a route to get all users
+router.get("/", async (req, res) => {
+  // If the request is coming from a user access level return 401
+  if (req.user.role.role_title != "admin") {
+    if (req.params.id != req.user.id) {
+      return res.status(401).json({
+        code: "unauthorized",
+        message: "User is not allowed to get all users"
+      })
+    }
+  }
+
+  // if there users in the query parameters
+  // Return the list of tracks the user has been enrolled in
+  if(req.query.user){
+    const userCourses = await courseService.getUserCourses(req.query.user);
+    return res.json({
+      code: "success",
+      result: userCourses
+    })
+  }
+
+  // Get all tracks from the database
+  const courses = await courseService.getCourses();
+  return res.json({
+    code: "success",
+    result: courses
+  })
+})
 
   
   router.delete("/:id", async (req, res) => {

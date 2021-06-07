@@ -46,15 +46,15 @@ router.post("/login", async function (req, res, next) {
           user_id: loadedUser._id.toString(),
         },
         // secrete key (secretKey) from config/config.js
-        config.secretKey,
+        config.secretKey
         // token expires in 2h (2 hours)
-        { expiresIn: "24h" }
+        // { expiresIn: "24h" }
       );
-      const role = await Role.findById(loadedUser.role_type);
+      const role = await Role.findById(loadedUser.role).select("-actions");
       res.status(200).json({
         token: token,
         user_id: loadedUser._id.toString(),
-        role_type: role.role_type
+        role: role
       });
     })
     //   If error - Inerna server error

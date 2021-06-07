@@ -1,7 +1,12 @@
 const Track = require('../models/track');
 const User = require('../models/user');
-class TrackManager{
+const userService = require("./userService");
+class TrackService{
+
+  // Get track by name
     async getTrackByName(trackName){
+
+      // Find the track with the track name
         const track = await Track.findOne({track_name: trackName })
         return track;
     }
@@ -9,11 +14,11 @@ class TrackManager{
         // Create a new track with the data from the request body
         const track = new Track({
           track_name: newTrack.track_name,
-          track_master: newTrack.track_master
+          track_master: newTrack.track_master,
+          date_created: Date.now()
         });
           
         // Save the user in the database
-    
         const savedTrack = await track.save();
     
         return savedTrack;
@@ -33,6 +38,12 @@ class TrackManager{
       return track;
     }
 
+    // Get all tracks from the database
+    async getTracks(){
+      const tracks = await Track.find().select("-courses -users");
+      return tracks;
+    }
+
     // returns whether or not a user is enrolled in a track
     async isUserEnrolled(trackId, userId){
       const users = await this.getUsers(trackId);
@@ -47,26 +58,46 @@ class TrackManager{
     // Enroll a user in a track
     async enrollUser(trackId, userId){
 
+      if(await this.isUserEnrolled(trackId, userId)) return {error: "User is already enrolled"};
       const track = await Track.findOne({ _id: trackId });
       track.users.push({
         enrollment_date: Date.now(),
         user_id: userId
       })
-      if(await track.save()) return true;
-      else return false;
+      const savedTrack = await track.save()
+      if(savedTrack) return {enrolledUser: await User.findById(userId) }
+      return {error: "unable to save"}
     }
 
     // Remove a user from a track
     async unEnrollUser(trackId, userId){
+
+      // determine if user is enrolled in track or not
+      let isUserEnrolled = await this.isUserEnrolled(trackId, userId);
+
+      // If a user is not enrolled return an error
+      if(!isUserEnrolled) return {error: "User is not enrolled"};
+
+      // Get the track from the database with the track id
       const track = await Track.findOne({ _id: trackId });
-        track.users.filter(userObject =>{
+
+        // filter the users field by removing the specific user and assign to the users field of the fetched
+        // track
+        track.users = track.users.filter(userObject =>{
           return userObject.user_id != userId;
         })
+
+      // Save the track synchronously
+      await track.save();
+
+      // return a success mesage
+      return {message: "successfully unenrolled " + (await User.findById(userId)).firstname };
     }
-    // returns an array of users enrolled in a course
+    // returns an array of users enrolled in a track
     async getUsers(trackId){
-      const usersObject = await Track.findOne({_id: trackId}).select('users -_id');
-      return usersObject.users;
+      const trackObject = await Track.findOne({_id: trackId}).select('users -_id');
+      if(!trackObject) return {error: {status: 404, message: "Track not found"}};
+      return trackObject.users;
     }
 
     // updates a track in the database
@@ -85,6 +116,7 @@ class TrackManager{
         track[field] = req.body[field];
       }
 
+      // return the saved track
       return await track.save();
 
     }
@@ -105,10 +137,11 @@ class TrackManager{
 
           // If the user id of the current track equals the userId parameter push it ot the result array
           if(user.user_id == userId) {
-            result.push({enrollment_date: user.enrollment_date, track_name: track.track_name});
+            result.push({enrollment_date: user.enrollment_date, track_name: track.track_name, track_master: track.track_master});
           }
         })
       })
+      if(result.length < 1) return {message: "No result found"}
       return result;
     }
 
@@ -117,12 +150,15 @@ class TrackManager{
 
       // Get all tracks the user is enrolled on
       const userTracks = await this.getUserTracks(userId);
+      
+      if(userTracks.length < 1) return {message: "User is not enrolled in any track"};
 
       // set the current track to the first element in the array
       let currentTrack = userTracks[0];
 
       // loop through the tracks
       userTracks.forEach(track =>{
+        
         // if the track is more current than currentTrack set it to the currentTrack variable
         if(track.enrollment_date > currentTrack.enrollment_date) currentTrack = track;
       })
@@ -130,4 +166,4 @@ class TrackManager{
     }
 }
 
-module.exports = new TrackManager();
+module.exports = new TrackService();

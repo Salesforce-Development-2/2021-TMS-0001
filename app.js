@@ -1,6 +1,5 @@
 const express = require("express");
 const morgan = require("morgan");
-const joi = require("joi");
 const helmet = require("helmet");
 const favicon = require("serve-favicon");
 require('dotenv').config()
@@ -12,6 +11,8 @@ const cors = require("cors");
 const User = require("./app/src/models/user");
 const Role = require("./app/src/models/role");
 
+// import homepage html
+const homepage = require("./app/src/utils/ui");
 // import swagger
 const swaggerUI = require('swagger-ui-express');
 
@@ -59,21 +60,26 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(helmet());
 
 const swaggerDocument = require('./api-docs.json')
 
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
-
+app.get("/", (req, res) =>{
+  res.send(homepage);
+})
 
 // Register a middleware to protect all the routes except the auth route
 app.use(async function (req, res, next) {
 
-  // If request comes to /admin or /users 
+  // If request comes to /auth or /api-docs do not authenticate 
   if(req.url.startsWith('/auth') || req.url.startsWith('/api-docs') ) next();
   else {
+
     // Authenticate
     // Extract the bearer token
     const authString = req.headers['authorization'];
+
     // If no token found return 401
     if (!authString) {
       res.status(401).json({
@@ -88,6 +94,7 @@ app.use(async function (req, res, next) {
 
   // Get the <token> part
   const token = parts[1];
+
   // Verify the token with the secret key
   jwt.verify(token, config.secretKey, async function(err, payload){
 
@@ -104,10 +111,8 @@ app.use(async function (req, res, next) {
       else {
         // Extract the user_id from the payload
         const { user_id } = payload;
-
         // Use the id to find the user
-        const user = await User.findById(user_id).populate('role_type');
-
+        const user = await User.findById(user_id).populate('role');
         req.user = user;
 
         next();
@@ -119,7 +124,7 @@ app.use(async function (req, res, next) {
 
 });
 
-// Middleware for Users, Tracks, Batches, Courses and Assessment Routes
+// Added middleware for Users, Tracks, Batches, Courses and Assessment Routes 
 app.use("/users", usersRoute);
 app.use("/tracks", tracksRoute);
 app.use("/batches", batchesRoute);
