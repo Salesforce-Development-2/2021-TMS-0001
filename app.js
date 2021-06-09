@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
+const https = require('https')
 
 // import models
 const User = require("./app/src/models/user");
@@ -128,6 +129,7 @@ app.use("/auth", authRoute);
 
 // STARTING THE SERVER
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+https.createServer(options, app).listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
