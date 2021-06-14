@@ -1,5 +1,7 @@
+// Import mongoose middleware
 const mongoose = require("mongoose");
 
+// Definition of course model through schema interface
 const courseSchema = mongoose.Schema({
   course_name: {
     type: String,

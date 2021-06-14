@@ -1,5 +1,7 @@
+// Import mongoose middleware
 const mongoose = require('mongoose');
 
+// Definition of track model through schema interface
 const trackSchema = mongoose.Schema ({
     track_name: {
         type: String,

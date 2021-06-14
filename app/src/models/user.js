@@ -1,5 +1,7 @@
+// Import mongoose middleware
 const mongoose = require("mongoose");
 
+// Definition of user model through schema interface
 const userSchema = mongoose.Schema({
   firstname: {
     type: String,

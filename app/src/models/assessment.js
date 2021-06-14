@@ -1,5 +1,7 @@
+// Import mongoose middleware
 const mongoose = require('mongoose');
 
+// Definition of assessment model through schema interface
 const assessmentSchema = mongoose.Schema ({
     assessment_type: String,
     score: Number,

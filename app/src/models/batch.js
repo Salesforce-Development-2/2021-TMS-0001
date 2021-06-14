@@ -1,5 +1,7 @@
+// Import mongoose middleware
 const mongoose = require('mongoose');
 
+// Definition of batch model through schema interface
 const batchSchema = mongoose.Schema ({
     batch_name: {
         type: String,

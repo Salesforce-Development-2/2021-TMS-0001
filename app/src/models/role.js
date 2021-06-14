@@ -1,5 +1,7 @@
+// Import mongoose middleware
 const mongoose = require('mongoose');
 
+// Definition of role model through schema interface
 const roleSchema = mongoose.Schema({
     role_title: String,
     actions:[
