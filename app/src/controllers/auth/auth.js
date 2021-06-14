@@ -66,11 +66,27 @@ router.post("/login", async function (req, res, next) {
 });
 
 //login
-router.get("/login", async function (req, res) {})
-router.post("/login", async function (req, res) {})
+router.get("/login", async function (req, res) {
+  res.render('login')
+})
 
 //upload files
-router.get("/upload", async function (req, res) {})
-router.post("/upload", async function (req, res) {})
+router.get("/upload", async function (req, res) {
+  res.render('upload')
+})
+router.post("/upload", async function (req, res) {
+  const fileUploaded = (req.file)
+  if(!fileUploaded){
+    return res.status(400).json({
+      code: "Bad request",
+      message: "Upload fail",
+    });
+  }else{
+    return res.status(201).json({
+      code: "Created",
+      message: "File uploaded successfully",
+    });
+  }
+})
 // EXPORTS
 module.exports = router;
