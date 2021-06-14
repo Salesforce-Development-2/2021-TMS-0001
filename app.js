@@ -7,7 +7,9 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
-const https = require('https')
+const https = require("https");
+const eje = require("ejs");
+const path = require("path");
 
 // import models
 const User = require("./app/src/models/user");
@@ -124,6 +126,19 @@ app.use("/batches", batchesRoute);
 app.use("/courses", coursesRoute);
 app.use("/assessments", assessmentsRoute);
 
+// Rendering static files
+app.use(express.static(path.join(__dirname, "public")));
+
+// Setup rendering template
+app.set("view engine", "ejs");
+// Render the home page using ejs
+app.get("/home", (req, res) => {
+  res.render("home", {
+    pageTitle: "Home",
+    path: "/home",
+  });
+});
+
 // Login auth route - GET - "/auth/login"
 app.use("/auth", authRoute);
 
@@ -132,4 +147,3 @@ const PORT = process.env.PORT || 3000;
 https.createServer(options, app).listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
