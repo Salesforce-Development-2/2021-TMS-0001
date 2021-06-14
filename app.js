@@ -8,7 +8,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const https = require("https");
-const eje = require("ejs");
 const path = require("path");
 
 // import models
@@ -61,7 +60,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+// Setup rendering template
+app.set("view engine", "ejs");
 app.use(helmet());
+app.use(morgan('tiny'));
 
 const swaggerDocument = require("./api-docs.json");
 
@@ -129,8 +131,7 @@ app.use("/assessments", assessmentsRoute);
 // Rendering static files
 app.use(express.static(path.join(__dirname, "public")));
 
-// Setup rendering template
-app.set("view engine", "ejs");
+
 // Render the home page using ejs
 app.get("/home", (req, res) => {
   res.render("home", {
