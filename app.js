@@ -9,6 +9,7 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const https = require("https");
 const path = require("path");
+const multer = require("multer")
 
 // import models
 const User = require("./app/src/models/user");
@@ -55,6 +56,26 @@ mongoose.connect(
   }
 );
 
+// setup multer file storage
+const fileStorage = multer.diskStorage({
+  destination: (req, res, cb)=>{
+          cb(null, './app/uploads')
+  },
+  filename: (req, file, cb)=>{
+          cb(null, new Date().toISOString().replace(/:/g, '-')  + file.originalname)
+  }
+})
+
+const fileFilter = (req,file,cb)=>{
+  if (file.mimetype ==='image/png'){
+          cb(null, true)
+  }else{
+          cb(null, false)
+  }
+
+}
+
+
 // Initialize app
 const app = express();
 app.use(cors());
@@ -64,6 +85,7 @@ app.use(express.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
 app.use(helmet());
 app.use(morgan('tiny'));
+app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single('file'));
 
 const swaggerDocument = require("./api-docs.json");
 
