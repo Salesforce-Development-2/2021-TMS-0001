@@ -65,5 +65,12 @@ router.post("/login", async function (req, res, next) {
     });
 });
 
+//login
+router.get("/login", async function (req, res) {})
+router.post("/login", async function (req, res) {})
+
+//upload files
+router.get("/upload", async function (req, res) {})
+router.post("/upload", async function (req, res) {})
 // EXPORTS
 module.exports = router;

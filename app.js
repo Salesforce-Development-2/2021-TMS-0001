@@ -75,7 +75,6 @@ const fileFilter = (req,file,cb)=>{
 
 }
 
-
 // Initialize app
 const app = express();
 app.use(cors());
