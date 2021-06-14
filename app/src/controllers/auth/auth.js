@@ -1,7 +1,7 @@
 // CORE MODULES
 const express = require("express");
 const router = express.Router();
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 
 // INTERNAL MODULES - FILES - OUR OWN MODULES
 const config = require("../../config/config");
@@ -24,20 +24,19 @@ router.post("/login", async function (req, res, next) {
         return res.status(401).json({
           code: "user-not-found",
           message: "The email specified is not found!",
-        })
+        });
       }
       // If user exist - validate the user
       loadedUser = user;
       return bcrypt.compare(password, user.password);
-      
     })
     .then(async (isEqual) => {
       if (!isEqual) {
         // Wrong password - If password entered by the user is incorrect
         return res.status(401).json({
           code: "Unauthorized",
-          message: "Wrong Credentials"
-        })
+          message: "Wrong Credentials",
+        });
       }
       // Generatw jwt token - If credentials are correct
       const token = jwt.sign(
@@ -54,10 +53,10 @@ router.post("/login", async function (req, res, next) {
       res.status(200).json({
         token: token,
         user_id: loadedUser._id.toString(),
-        role: role
+        role: role,
       });
     })
-    //   If error - Inerna server error
+    //   If error - Internal server error
     .catch((err) => {
       if (!err.statusCode) {
         err.statusCode = 500;
