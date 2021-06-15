@@ -11,6 +11,7 @@ const cors = require("cors");
 const https = require("https");
 const path = require("path");
 const multer = require("multer")
+const fs = require("fs");
 
 // import models
 const User = require("./app/src/models/user");
@@ -156,8 +157,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Render the home page using ejs
 app.get("/home", (req, res) => {
-  res.render("home", {
-    pageTitle: "Home",
+  res.render("index", {
+    pageTitle: "Amalitech Transcript Management System API",
     path: "/home",
   });
 });
@@ -165,6 +166,10 @@ app.get("/home", (req, res) => {
 // Login auth route - GET - "/auth/login"
 app.use("/auth", authRoute);
 
+
+const key = fs.readFileSync('./ssl/key.pem', 'utf8');
+const cert = fs.readFileSync('./ssl/server.crt', 'utf8');
+const options = {key: key, cert: cert}
 // STARTING THE SERVER
 const PORT = process.env.PORT || 3000;
 https.createServer(options, app).listen(PORT, () => {
